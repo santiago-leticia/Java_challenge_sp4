@@ -48,27 +48,27 @@ public class ConsultaRepository {
     }
 
     public Set<Consulta> RelatorioConsulta() {
-        String sql = "select * from T_RHSTU_consulta";
+        String sql = "select * from T_RHSTU_consulta WHERE= ?";
         Set<Consulta> l = new HashSet<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)
         ) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Consulta consulta = new Consulta();
-                consulta.setId_consulta(rs.getInt(1));
-                consulta.setNome_usuario(rs.getString(2));
-                consulta.setNome_funcionario(rs.getString(3));
-                consulta.setData_consulta(rs.getString(4));
-                consulta.setInformacao_consulta(rs.getString(5));
-                l.add(consulta);
+            try (ResultSet rs = ps.executeQuery()){
+                while (rs.next()) {
+                    Consulta consulta = new Consulta();
+                    consulta.setId_consulta(rs.getInt(1));
+                    consulta.setNome_usuario(rs.getString(2));
+                    consulta.setNome_funcionario(rs.getString(3));
+                    consulta.setData_consulta(rs.getString(4));
+                    consulta.setInformacao_consulta(rs.getString(5));
+                    l.add(consulta);
+                }
+                System.out.println("ID da consulta: " + rs.getInt(1));
+                System.out.println("Nome do paciente: " + rs.getString(2));
+                System.out.println("Nome do Funcionario: " + rs.getString(3));
+                System.out.println("Data da consulta: " + rs.getString(4));
+                System.out.println("Informações sobre a consulta: " + rs.getString(5));
             }
-            System.out.println("ID da consulta: " + rs.getInt(1));
-            System.out.println("Nome do paciente: " + rs.getString(2));
-            System.out.println("Nome do Funcionario: " + rs.getString(3));
-            System.out.println("Data da consulta: " + rs.getString(4));
-            System.out.println("Informações sobre a consulta: " + rs.getString(5));
-
         } catch (SQLException e) {
             throw new RuntimeException();
         }

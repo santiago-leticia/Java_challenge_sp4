@@ -48,24 +48,25 @@ public class FuncionarioRepository {
     }
 
     public List<Funcionario> RelatorioFuncionario() {
-        String sql = "select * from T_RHSTU_FUNCIONARIO";
+        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE+?";
         List<Funcionario> l = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Funcionario funcionario = new Funcionario();
-                funcionario.setId_funcionario(rs.getInt(1));
-                funcionario.setNome_funcionario(rs.getString(2));
-                funcionario.setEmail(rs.getString(3));
-                funcionario.setSenha(rs.getString(4));
-                l.add(funcionario);
+            try(ResultSet rs = ps.executeQuery();) {
+                while (rs.next()) {
+                    Funcionario funcionario = new Funcionario();
+                    funcionario.setId_funcionario(rs.getInt(1));
+                    funcionario.setNome_funcionario(rs.getString(2));
+                    funcionario.setEmail(rs.getString(3));
+                    funcionario.setSenha(rs.getString(4));
+                    l.add(funcionario);
+                }
+                System.out.println("ID da Funcionario: " + rs.getInt(1));
+                System.out.println("Nome do funcionario: " + rs.getString(2));
+                System.out.println("Email: " + rs.getString(3));
+                System.out.println("senha: " + rs.getString(4));
             }
-            System.out.println("ID da Funcionario: " + rs.getInt(1));
-            System.out.println("Nome do funcionario: " + rs.getString(2));
-            System.out.println("Email: " + rs.getString(3));
-            System.out.println("senha: " + rs.getString(4));
         } catch (SQLException e) {
             throw new RuntimeException();
         }
@@ -85,7 +86,7 @@ public class FuncionarioRepository {
         }
     }
 
-    public void updanteFuncionario(Funcionario funcionario){
+    public boolean updanteFuncionario(Funcionario funcionario){
         String sql="UPDATE T_RHSTU_FUNCIONARIO SET" +
                 "nome_funcionario=?, " +
                 "email=?, " +
@@ -97,6 +98,8 @@ public class FuncionarioRepository {
             ps.setString(2,funcionario.getEmail());
             ps.setString(3,funcionario.getEmail());
             ps.setInt(5,funcionario.getId_funcionario());
+            int linhasAlteradas=ps.executeUpdate();
+            return linhasAlteradas>0;
         }catch (SQLException e){
             throw new RuntimeException(e);
         }

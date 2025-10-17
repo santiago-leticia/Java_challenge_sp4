@@ -45,7 +45,28 @@ public class UsuarioService {
     public boolean RemoverID(int id) throws  SQLException{
         if(id<0){
             throw new IllegalAccessError("O id não pode ter valor menor do que 0");
+        }else {
+            boolean existe=usuarioRepository.RemoverPaciente(id);
+            if (!existe){
+                System.out.println("Não existe o id prsente");
+            }
         }
         return usuarioRepository.RemoverPaciente(id);
     }
+
+    public boolean atualizaInformacao(int id, String nome, String telefone, String email) throws SQLException{
+        try {
+            if (id<0){
+                return false;
+            }
+            if (nome.isEmpty() || telefone.isEmpty() || email.isEmpty()){
+                return false;
+            }
+            return usuarioRepository.updanteUsuario(id,nome,telefone,email);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }

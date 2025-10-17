@@ -51,7 +51,7 @@ public class UsuarioRepository {
         }
 
         public List<Usuario> RelatorioPaciente(int id_paciente) {
-            String sql = "select * from T_RHSTU_PACIENTE WHERE id_paciente";
+            String sql = "select * from T_RHSTU_PACIENTE WHERE id_paciente=?";
             List<Usuario> l = new ArrayList<>();
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)) {
@@ -92,21 +92,21 @@ public class UsuarioRepository {
             }
         }
 
-        public void updanteUsuario(Usuario usuario){
+        public boolean updanteUsuario(int id, String nome, String telefone, String email){
             String sql="UPDATE T_RHSTU_PACIENTE SET" +
                     "nome_paciente=?, " +
-                    "cpf=?, " +
                     "telefone=?, " +
                     "email=?" +
                     "WHERE id_paciente=?";
             try(Connection con= dataSource.getConnection();
                 PreparedStatement ps= con.prepareStatement(sql))
             {
-                ps.setString(1,usuario.getNome_usuario());
-                ps.setString(2,usuario.getCpf());
-                ps.setString(3, usuario.getTelefone());
-                ps.setString(4, usuario.getEmail());
-                ps.setInt(5, usuario.getId_usuario());
+                ps.setString(1,nome);
+                ps.setString(2, telefone);
+                ps.setString(3, email);
+                ps.setInt(4, id);
+                int linhasAlteradas=ps.executeUpdate();
+                return linhasAlteradas>0;
             }catch (SQLException e){
                 throw new RuntimeException("Erro de executar updante.");
             }
