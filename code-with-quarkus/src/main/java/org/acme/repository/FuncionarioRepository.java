@@ -47,12 +47,13 @@ public class FuncionarioRepository {
         }
     }
 
-    public List<Funcionario> RelatorioFuncionario() {
-        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE+?";
+    public List<Funcionario> RelatorioFuncionario(int id) {
+        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE=?";
         List<Funcionario> l = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
+            ps.setInt(1,id);
             try(ResultSet rs = ps.executeQuery();) {
                 while (rs.next()) {
                     Funcionario funcionario = new Funcionario();
@@ -86,7 +87,7 @@ public class FuncionarioRepository {
         }
     }
 
-    public boolean updanteFuncionario(Funcionario funcionario){
+    public boolean updanteFuncionario(int id_funcionario, String nome_funcionario, String email_funcionario, String senha_funcionario){
         String sql="UPDATE T_RHSTU_FUNCIONARIO SET" +
                 "nome_funcionario=?, " +
                 "email=?, " +
@@ -94,10 +95,10 @@ public class FuncionarioRepository {
                 "WHERE id_funcionario=?";
         try(Connection con= dataSource.getConnection();
             PreparedStatement ps= con.prepareStatement(sql)) {
-            ps.setString(1,funcionario.getNome_funcionario());
-            ps.setString(2,funcionario.getEmail());
-            ps.setString(3,funcionario.getEmail());
-            ps.setInt(5,funcionario.getId_funcionario());
+            ps.setString(1,nome_funcionario);
+            ps.setString(2,email_funcionario);
+            ps.setString(3,senha_funcionario);
+            ps.setInt(5,id_funcionario);
             int linhasAlteradas=ps.executeUpdate();
             return linhasAlteradas>0;
         }catch (SQLException e){

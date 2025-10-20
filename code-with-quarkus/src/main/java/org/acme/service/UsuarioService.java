@@ -42,7 +42,7 @@ public class UsuarioService {
         }
     }
 
-    public boolean RemoverID(int id) throws  SQLException{
+    public boolean RemoverIdUsuario(int id) throws  SQLException{
         if(id<0){
             throw new IllegalAccessError("O id não pode ter valor menor do que 0");
         }else {
@@ -54,7 +54,7 @@ public class UsuarioService {
         return usuarioRepository.RemoverPaciente(id);
     }
 
-    public boolean atualizaInformacao(int id, String nome, String telefone, String email) throws SQLException{
+    public boolean atualizaInformacaoU(int id, String nome, String telefone, String email) throws SQLException{
         try {
             if (id<0){
                 return false;

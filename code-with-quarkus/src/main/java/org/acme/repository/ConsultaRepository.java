@@ -47,12 +47,13 @@ public class ConsultaRepository {
         }
     }
 
-    public Set<Consulta> RelatorioConsulta() {
+    public Set<Consulta> RelatorioConsulta(int id) {
         String sql = "select * from T_RHSTU_consulta WHERE= ?";
         Set<Consulta> l = new HashSet<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)
         ) {
+            ps.setInt(1,id);
             try (ResultSet rs = ps.executeQuery()){
                 while (rs.next()) {
                     Consulta consulta = new Consulta();
@@ -63,6 +64,7 @@ public class ConsultaRepository {
                     consulta.setInformacao_consulta(rs.getString(5));
                     l.add(consulta);
                 }
+                System.out.println("Proxima consulta do paciente"+ rs.getString(3));
                 System.out.println("ID da consulta: " + rs.getInt(1));
                 System.out.println("Nome do paciente: " + rs.getString(2));
                 System.out.println("Nome do Funcionario: " + rs.getString(3));
@@ -88,8 +90,8 @@ public class ConsultaRepository {
         }
     }
 
-    public boolean updanteConsulta(Consulta consulta) throws SQLException{
-        String sql="UPDATE T_RHSTU_PACIENTE SET" +
+    public boolean updanteConsulta(int id_c, String n_u, String n_f, String d_c, String i_c) throws SQLException{
+        String sql="UPDATE T_RHSTU_consulta SET" +
                 "nome_paciente=?, " +
                 "nome_funcionario=?, " +
                 "data_consulta=?, " +
@@ -97,11 +99,11 @@ public class ConsultaRepository {
                 "WHERE id_consulta=?";
         try(Connection con= dataSource.getConnection();
             PreparedStatement ps= con.prepareStatement(sql)) {
-            ps.setString(1,consulta.getNome_usuario());
-            ps.setString(2, consulta.getNome_funcionario());
-            ps.setString(3, consulta.getData_consulta());
-            ps.setString(4, consulta.getInformacao_consulta());
-            ps.setInt(5, consulta.getId_consulta());
+            ps.setString(1,n_u);
+            ps.setString(2, n_f);
+            ps.setString(3, d_c);
+            ps.setString(4, i_c);
+            ps.setInt(5, id_c);
             int linhasAfetadas = ps.executeUpdate();
             return linhasAfetadas>0;
         }catch (SQLException e){
