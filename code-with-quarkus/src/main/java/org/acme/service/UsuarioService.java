@@ -24,7 +24,7 @@ public class UsuarioService {
             return false;
         } else if (usuario.getTelefone().isEmpty()) {
             return false;
-        } else if (usuario.getEmail().isEmpty()) {
+        } else if (usuario.getEmail_usuario().isEmpty()) {
             return false;
         }
         usuarioRepository.inserirPaciente(usuario);

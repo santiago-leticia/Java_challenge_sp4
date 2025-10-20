@@ -21,7 +21,7 @@ public class FuncionarioRepository {
     /*create table T_RHSTU_FUNCIONARIO("
     id_funcionario NUMBER primary key, " +
     "nome_funcionario VARCHAR(90), " +
-    "email VARCHAR(180), "+
+    "email_paciente VARCHAR(180), "+
     "senha VARCHAR(180)";
     */
     @Inject
@@ -48,7 +48,7 @@ public class FuncionarioRepository {
     }
 
     public List<Funcionario> RelatorioFuncionario(int id) {
-        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE=?";
+        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE id_funcionario=?";
         List<Funcionario> l = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))

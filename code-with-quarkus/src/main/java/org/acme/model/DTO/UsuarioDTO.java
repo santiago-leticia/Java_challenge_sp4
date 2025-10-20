@@ -4,7 +4,7 @@ public class UsuarioDTO {
     private String nome_usuario;
     private String cpf;
     private String telefone;
-    private String email;
+    private String email_usuario;
 
     public UsuarioDTO() {}
 
@@ -32,11 +32,11 @@ public class UsuarioDTO {
         this.telefone = telefone;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmail_usuario() {
+        return email_usuario;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail_usuario(String email_usuario) {
+        this.email_usuario = email_usuario;
     }
 }

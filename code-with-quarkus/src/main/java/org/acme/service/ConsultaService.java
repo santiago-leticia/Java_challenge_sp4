@@ -4,13 +4,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.acme.model.Consulta;
 import org.acme.model.DTO.ConsultaDTO;
-import org.acme.model.DTO.FuncionarioDTO;
-import org.acme.model.Funcionario;
 import org.acme.repository.ConsultaRepository;
-import org.acme.repository.FuncionarioRepository;
+
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Set;
 
 @ApplicationScoped
@@ -20,7 +17,7 @@ public class ConsultaService {
 
     public boolean cadastraConsulta(ConsultaDTO consultaDTO) throws SQLException {
         try{
-            if (consultaDTO.getNome_paciente().isEmpty()){
+            if (consultaDTO.getNome_usuario().isEmpty()){
                 return false;
             } else if (consultaDTO.getNome_funcionario().isEmpty()){
                 return false;
@@ -34,15 +31,15 @@ public class ConsultaService {
         }
     }
 
-    public boolean existeConsulta(int id) throws SQLException{
+    public boolean existeConsulta(int id,  String nome_paciente) throws SQLException{
         try {
-            Set<Consulta> temS_N= consultaRepository.RelatorioConsulta(id);
+            Set<Consulta> temS_N= consultaRepository.RelatorioConsulta(id, nome_paciente);
             if (temS_N.isEmpty()){
                 System.out.println("Não existe um funcionario com esse id.");
                 return false;
             }else {
                 System.out.println("Funcionario encontrado");
-                consultaRepository.RelatorioConsulta(id);
+                consultaRepository.RelatorioConsulta(id, nome_paciente);
                 return true;
             }
         }catch (Exception e){
@@ -68,15 +65,15 @@ public class ConsultaService {
 
     }
 
-    public boolean atualizarInformacaoC(int id_c, String n_u, String n_f, String d_c, String i_c){
+    public boolean atualizarInformacaoC(int id_c, String n_u, String email, String n_f, String d_c, String i_c){
         try {
             if (id_c<0){
                 return false;
             }
-            if (n_u.isEmpty() || n_f.isEmpty() || d_c.isEmpty() || i_c.isEmpty()){
+            if (n_u.isEmpty() || email.isEmpty() || n_f.isEmpty() || d_c.isEmpty() || i_c.isEmpty()){
                 return false;
             }
-            return consultaRepository.updanteConsulta(id_c,n_u,n_f,d_c,i_c);
+            return consultaRepository.updanteConsulta(id_c,n_u, email,n_f,d_c,i_c);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
