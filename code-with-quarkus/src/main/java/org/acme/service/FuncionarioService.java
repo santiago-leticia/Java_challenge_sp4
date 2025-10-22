@@ -31,21 +31,19 @@ public class FuncionarioService{
         }
     }
 
-    public boolean existeFuncionario(int id) throws SQLException{
+    public List<Funcionario> existeFuncionario(int id) throws SQLException{
         try {
             List<Funcionario> temS_N= funcionarioRepository.RelatorioFuncionario(id);
             if (temS_N.isEmpty()){
                 System.out.println("Não existe um funcionario com esse id.");
-                return false;
             }else {
                 System.out.println("Funcionario encontrado");
-                funcionarioRepository.RelatorioFuncionario(id);
-                return true;
+                return funcionarioRepository.RelatorioFuncionario(id);
             }
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-
+        return List.of();
     }
 
     public boolean RemoverId(int id ) throws SQLException{
@@ -65,15 +63,15 @@ public class FuncionarioService{
 
     }
 
-    public boolean atualizarInformacaoF(int id, String nome,String email, String senha){
+    public boolean atualizarInformacaoF(int id, String nome_funcionario,String email, String senha){
         try {
             if (id<0){
                 return false;
             }
-            if (nome.isEmpty() || email.isEmpty() || senha.isEmpty()){
+            if (nome_funcionario.isEmpty() || email.isEmpty() || senha.isEmpty()){
                 return false;
             }
-            return funcionarioRepository.updanteFuncionario(id,nome,email,senha);
+            return funcionarioRepository.updanteFuncionario(id,nome_funcionario,email,senha);
         }catch (Exception e){
             throw new RuntimeException(e);
         }

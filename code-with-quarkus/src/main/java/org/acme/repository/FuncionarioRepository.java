@@ -59,14 +59,16 @@ public class FuncionarioRepository {
                     Funcionario funcionario = new Funcionario();
                     funcionario.setId_funcionario(rs.getInt(1));
                     funcionario.setNome_funcionario(rs.getString(2));
-                    funcionario.setEmail(rs.getString(3));
+                    funcionario.setEmail_funcionario(rs.getString(3));
                     funcionario.setSenha(rs.getString(4));
                     l.add(funcionario);
+                    funcionario.lerFuncionario(
+                            rs.getInt(1),
+                            rs.getString(2),
+                            rs.getString(3),
+                            rs.getString(4)
+                            );
                 }
-                System.out.println("ID da Funcionario: " + rs.getInt(1));
-                System.out.println("Nome do funcionario: " + rs.getString(2));
-                System.out.println("Email: " + rs.getString(3));
-                System.out.println("senha: " + rs.getString(4));
             }
         } catch (SQLException e) {
             throw new RuntimeException();

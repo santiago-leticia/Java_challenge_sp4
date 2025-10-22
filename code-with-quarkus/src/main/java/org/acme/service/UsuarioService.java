@@ -30,16 +30,19 @@ public class UsuarioService {
         usuarioRepository.inserirPaciente(usuario);
         return true;
     }
-    public boolean existeUsuario(int id_usuario) throws SQLException{
-        List<Usuario> temS_N= usuarioRepository.RelatorioPaciente(id_usuario);
-        if (temS_N.isEmpty()){
-            System.out.println("Não existe paciente que possui o ID: "+id_usuario);
-            return false;
-        }else {
-            System.out.println("Paciente encontrado com sucesso!");
-            usuarioRepository.RelatorioPaciente(id_usuario);
-            return true;
+    public List<Usuario> existeUsuario(int id_usuario) throws SQLException{
+        try {
+            List<Usuario> temS_N= usuarioRepository.RelatorioPaciente(id_usuario);
+            if (temS_N.isEmpty()){
+                System.out.println("Não existe paciente que possui o ID: "+id_usuario);
+            }else {
+                System.out.println("Paciente encontrado com sucesso!");
+                return usuarioRepository.RelatorioPaciente(id_usuario);
+            }
+        }catch (Exception e){
+            throw  new RuntimeException(e);
         }
+        return List.of();
     }
 
     public boolean RemoverIdUsuario(int id) throws  SQLException{

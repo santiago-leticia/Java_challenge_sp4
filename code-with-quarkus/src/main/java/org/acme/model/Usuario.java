@@ -50,4 +50,12 @@ public class Usuario {
     public void setEmail_usuario(String email_usuario) {
         this.email_usuario = email_usuario;
     }
+
+    public void ler(int id, String nm_paciente, String cpf, String tl, String email){
+        System.out.println("ID do paciente: " + id);
+        System.out.println("Nome do paciente: " + nm_paciente);
+        System.out.println("CPF: " + cpf);
+        System.out.println("Telefone: " + tl);
+        System.out.println("Email: " + email);
+    }
 }

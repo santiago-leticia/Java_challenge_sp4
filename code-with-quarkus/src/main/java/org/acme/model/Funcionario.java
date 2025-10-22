@@ -3,7 +3,7 @@ package org.acme.model;
 public class Funcionario extends Usuario {
     private int id_funcionario;
     private String nome_funcionario;
-    private String email;
+    private String email_funcionario;
     private String senha;
 
     public Funcionario() {}
@@ -25,12 +25,12 @@ public class Funcionario extends Usuario {
         this.nome_funcionario = nome_funcionario;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmail_funcionario() {
+        return email_funcionario;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail_funcionario(String email_funcionario) {
+        this.email_funcionario = email_funcionario;
     }
 
     public String getSenha() {
@@ -39,5 +39,12 @@ public class Funcionario extends Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public void lerFuncionario(int id, String nm_funcionario, String email, String senha){
+        System.out.println("ID do Funcionario: " + id);
+        System.out.println("Nome do Funcionario: " + nm_funcionario);
+        System.out.println("Email do funcionario: " + email);
+        System.out.println("Senha: " + senha);
     }
 }

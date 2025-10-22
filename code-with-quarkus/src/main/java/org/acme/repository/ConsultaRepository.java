@@ -61,6 +61,7 @@ public class ConsultaRepository {
             try (ResultSet rs = ps.executeQuery()){
                 while (rs.next()) {
                     Consulta consulta = new Consulta();
+                    System.out.println();
                     consulta.setId_consulta(rs.getInt(1));
                     consulta.setNome_usuario(rs.getString(2));
                     consulta.setEmail_usuario(rs.getString(3));
@@ -68,14 +69,11 @@ public class ConsultaRepository {
                     consulta.setData_consulta(rs.getString(5));
                     consulta.setInformacao_consulta(rs.getString(6));
                     l.add(consulta);
+                    consulta.lerConsulta(rs.getInt(1),
+                            rs.getString(2),rs.getString(3),
+                            rs.getString(4), rs.getString(5),
+                            rs.getString(6));
                 }
-                System.out.println("Proxima consulta do paciente"+ rs.getString(3));
-                System.out.println("ID da consulta: " + rs.getInt(1));
-                System.out.println("Nome do paciente: " + rs.getString(2));
-                System.out.println("Email do paciente: "+rs.getString(3));
-                System.out.println("Nome do Funcionario: " + rs.getString(4));
-                System.out.println("Data da consulta: " + rs.getString(5));
-                System.out.println("Informações sobre a consulta: " + rs.getString(6));
             }
         } catch (SQLException e) {
             throw new RuntimeException();

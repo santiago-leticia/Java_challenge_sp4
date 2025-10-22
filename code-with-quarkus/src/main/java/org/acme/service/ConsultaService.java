@@ -8,6 +8,7 @@ import org.acme.repository.ConsultaRepository;
 
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 @ApplicationScoped
@@ -31,21 +32,19 @@ public class ConsultaService {
         }
     }
 
-    public boolean existeConsulta(int id,  String nome_paciente) throws SQLException{
+    public Set<Consulta> existeConsulta(int id,  String nome_paciente) throws SQLException{
         try {
             Set<Consulta> temS_N= consultaRepository.RelatorioConsulta(id, nome_paciente);
             if (temS_N.isEmpty()){
                 System.out.println("Não existe um funcionario com esse id.");
-                return false;
             }else {
                 System.out.println("Funcionario encontrado");
-                consultaRepository.RelatorioConsulta(id, nome_paciente);
-                return true;
+                return consultaRepository.RelatorioConsulta(id, nome_paciente);
             }
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-
+        return Set.of();
     }
 
     public boolean RemoverIdConsulta(int id ) throws SQLException{

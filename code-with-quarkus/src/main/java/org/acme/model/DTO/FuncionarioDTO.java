@@ -15,12 +15,10 @@ public class FuncionarioDTO extends UsuarioDTO {
         this.nome_funcionario = nome_funcionario;
     }
 
-    @Override
     public String getEmail() {
         return email;
     }
 
-    @Override
     public void setEmail(String email) {
         this.email = email;
     }

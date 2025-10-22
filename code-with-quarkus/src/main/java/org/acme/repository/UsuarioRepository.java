@@ -43,7 +43,7 @@ public class UsuarioRepository {
                 ps.setString(2, usuario.getNome_usuario());
                 ps.setString(3, usuario.getCpf());
                 ps.setString(4, usuario.getTelefone());
-                ps.setString(5, usuario.getEmail());
+                ps.setString(5, usuario.getEmail_usuario());
                 ps.executeUpdate();
             } catch (SQLException e) {
                 throw new SQLException();
@@ -63,14 +63,16 @@ public class UsuarioRepository {
                         usuario.setNome_usuario(rs.getString(2));
                         usuario.setCpf(rs.getString(3));
                         usuario.setTelefone(rs.getString(4));
-                        usuario.setEmail(rs.getString(5));
+                        usuario.setEmail_usuario(rs.getString(5));
+                        usuario.ler(rs.getInt(1),
+                                rs.getString(2),
+                                rs.getString(3),
+                                rs.getString(4),
+                                rs.getString(5)
+                        );
                         l.add(usuario);
                     }
-                    System.out.println("ID do paciente: " + rs.getInt(1));
-                    System.out.println("Nome do paciente: " + rs.getString(2));
-                    System.out.println("CPF: " + rs.getString(3));
-                    System.out.println("Telefone: " + rs.getString(4));
-                    System.out.println("Email: " + rs.getString(5));
+
                 }
 
             } catch (SQLException e) {

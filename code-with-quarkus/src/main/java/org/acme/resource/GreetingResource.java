@@ -4,15 +4,20 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.acme.model.Consulta;
 import org.acme.model.DTO.ConsultaDTO;
 import org.acme.model.DTO.FuncionarioDTO;
 import org.acme.model.DTO.UsuarioDTO;
+import org.acme.model.Funcionario;
+import org.acme.model.Usuario;
 import org.acme.service.ConsultaService;
 import org.acme.service.FuncionarioService;
 import org.acme.service.UsuarioService;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 @Path("/doctorAjuda")
 public class GreetingResource {
@@ -25,7 +30,7 @@ public class GreetingResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/cadastrarFuncionario")
+    @Path("/cadastrarPaciente")
     public Response cadastraPaciente(UsuarioDTO usuario) throws SQLException{
         try{boolean ver= usuarioService.cadastraUsuario(usuario);
             if (ver){
@@ -68,6 +73,44 @@ public class GreetingResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao adicionar Consulta" +e.getMessage())
                     .build();
+        }
+    }
+    @GET
+    @Path("/relatorio/paciente")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response Relatorio_paciente(int id){
+        try {
+            List<Usuario>l=usuarioService.existeUsuario(id);
+            return Response.status(Response.Status.OK).entity(l).build();
+        } catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao conectar").build();
+        }
+    }
+    @GET
+    @Path("/relatorio/funcionario")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response Relatorio_funcionario(int id_funcionario){
+        try {
+            List<Funcionario>l=funcionarioService.existeFuncionario(id_funcionario);
+            return Response.status(Response.Status.OK)
+                    .entity(l).build();
+        }catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao conectar").build();
+        }
+    }
+    @GET
+    @Path("/relatorio/Consulta")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response Relatorio_Consulta(int id_consulta, String nome_paciente){
+        try{
+            Set<Consulta>l= consultaService.existeConsulta(id_consulta,nome_paciente);
+            return Response.status(Response.Status.OK)
+                    .entity(l).build();
+        }catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao conectar").build();
         }
     }
 
@@ -164,12 +207,13 @@ public class GreetingResource {
 
     @PUT
     @Path("/atualizar/Consulta/{id_consulta}/{nome_paciente}/{nome_funcionario}/{data_consulta}/{informacao_consulta}")
-    public Response atualizarFuncionario(@PathParam("id_consulta") int id_consulta,
+    public Response atualizarConsulta(@PathParam("id_consulta") int id_consulta,
                                          @PathParam("nome_paciente") String nm_paciente,
+                                         @PathParam("email_paciente") String email_paciente,
                                          @PathParam("nome_funcionario") String nm_funcionario,
                                          @PathParam("data_consulta") String dt_consulta,
                                          @PathParam("informacao_consulta") String in_consulta) throws SQLException {
-        boolean verificar=consultaService.atualizarInformacaoC(id_consulta, nm_paciente,nm_funcionario,dt_consulta,in_consulta);
+        boolean verificar=consultaService.atualizarInformacaoC(id_consulta, nm_paciente,email_paciente,nm_funcionario,dt_consulta,in_consulta);
 
         if(verificar){
             return Response.status(Response.Status.OK).entity("Dados alterdos com sucesso").build();
