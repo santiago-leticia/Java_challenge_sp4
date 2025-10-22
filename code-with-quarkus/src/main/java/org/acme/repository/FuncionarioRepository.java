@@ -20,7 +20,8 @@ public class FuncionarioRepository {
 
     /*create table T_RHSTU_FUNCIONARIO("
     id_funcionario NUMBER primary key, " +
-    "nome_funcionario VARCHAR(90), " +
+    "nome_funcionario VARCHAR(90),
+     tipo_funcionario" +
     "email_paciente VARCHAR(180), "+
     "senha VARCHAR(180)";
     */
@@ -30,16 +31,18 @@ public class FuncionarioRepository {
     public void inserirFuncionario(FuncionarioDTO funcionario) throws SQLException {
         String sqlI = "insert into T_RHSTU_FUNCIONARIO (" +
                 "id_funcionario, " +
-                "nome_funcionario, " +
+                "nome_funcionario," +
+                "tipo_funcionario " +
                 "email, " +
                 "senha " +
-                "values (?,?,?,?)";
+                "values (?,?,?, ?,?)";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sqlI))
         {
             ps.setString(1, funcionario.getNome_funcionario());
-            ps.setString(2, funcionario.getEmail());
-            ps.setString(3, funcionario.getSenha());
+            ps.setString(2,funcionario.getTipo_funcionario());
+            ps.setString(3, funcionario.getEmail());
+            ps.setString(4, funcionario.getSenha());
             ps.executeUpdate();
         }
         catch (SQLException e) {
@@ -59,14 +62,16 @@ public class FuncionarioRepository {
                     Funcionario funcionario = new Funcionario();
                     funcionario.setId_funcionario(rs.getInt(1));
                     funcionario.setNome_funcionario(rs.getString(2));
-                    funcionario.setEmail_funcionario(rs.getString(3));
-                    funcionario.setSenha(rs.getString(4));
+                    funcionario.setTipo_funcionario(rs.getString(3));
+                    funcionario.setEmail_funcionario(rs.getString(4));
+                    funcionario.setSenha(rs.getString(5));
                     l.add(funcionario);
                     funcionario.lerFuncionario(
                             rs.getInt(1),
                             rs.getString(2),
                             rs.getString(3),
-                            rs.getString(4)
+                            rs.getString(4),
+                            rs.getString(5)
                             );
                 }
             }
@@ -89,15 +94,17 @@ public class FuncionarioRepository {
         }
     }
 
-    public boolean updanteFuncionario(int id_funcionario, String nome_funcionario, String email_funcionario, String senha_funcionario){
+    public boolean updanteFuncionario(int id_funcionario, String nome_funcionario,String tipo_funcionario, String email_funcionario, String senha_funcionario){
         String sql="UPDATE T_RHSTU_FUNCIONARIO SET" +
-                "nome_funcionario=?, " +
+                "nome_funcionario=?," +
+                "tipo_funcionario=? " +
                 "email=?, " +
                 "senha=?" +
                 "WHERE id_funcionario=?";
         try(Connection con= dataSource.getConnection();
             PreparedStatement ps= con.prepareStatement(sql)) {
             ps.setString(1,nome_funcionario);
+            ps.setString(2,tipo_funcionario);
             ps.setString(2,email_funcionario);
             ps.setString(3,senha_funcionario);
             ps.setInt(5,id_funcionario);
