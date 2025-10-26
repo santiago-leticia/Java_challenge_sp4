@@ -17,47 +17,62 @@ public class UsuarioService {
     UsuarioRepository usuarioRepository;
 
     public boolean cadastraUsuario(UsuarioDTO usuario) throws SQLException{
-
-        if (usuario.getNome_usuario().isEmpty()){
-            return false;
-        } else if (usuario.getCpf().isEmpty()) {
-            return false;
-        } else if (usuario.getTelefone().isEmpty()) {
-            return false;
-        } else if (usuario.getEmail_usuario().isEmpty()) {
-            return false;
-        }
-        usuarioRepository.inserirPaciente(usuario);
-        return true;
-    }
-    public List<Usuario> existeUsuario(int id_usuario) throws SQLException{
         try {
-            List<Usuario> temS_N= usuarioRepository.RelatorioPaciente(id_usuario);
+            if (usuario.getNome_usuario().isEmpty()){
+                return false;
+            } else if (usuario.getCpf().isEmpty()) {
+                return false;
+            } else if (usuario.getTelefone().isEmpty()) {
+                return false;
+            } else if (usuario.getEmail_usuario().isEmpty()) {
+                return false;
+            }else  if (usuario.getSenha_usuario().isEmpty()){
+                return false;
+            }
+            usuarioRepository.inserirPaciente(usuario);
+            return true;
+
+        } catch (Exception e){
+            throw  new RuntimeException(e);
+        }
+
+    }
+    public List<Usuario> existeUsuario(int id_usuario, String email, String senha) throws SQLException{
+        try {
+            List<Usuario> temS_N= usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
             if (temS_N.isEmpty()){
                 System.out.println("Não existe paciente que possui o ID: "+id_usuario);
+                return List.of();
             }else {
                 System.out.println("Paciente encontrado com sucesso!");
-                return usuarioRepository.RelatorioPaciente(id_usuario);
             }
+            return temS_N;
+
         }catch (Exception e){
             throw  new RuntimeException(e);
         }
-        return List.of();
+
     }
 
-    public boolean RemoverIdUsuario(int id) throws  SQLException{
-        if(id<0){
-            throw new IllegalAccessError("O id não pode ter valor menor do que 0");
-        }else {
-            boolean existe=usuarioRepository.RemoverPaciente(id);
-            if (!existe){
-                System.out.println("Não existe o id prsente");
+    public boolean RemoverIdUsuario(int id, String email, String senha) throws  SQLException{
+        try {
+            if(id<0){
+                throw new IllegalAccessError("O id não pode ter valor menor do que 0");
+            }else {
+                boolean existe=usuarioRepository.RemoverPaciente(id,email,senha);
+                if (!existe){
+                    System.out.println("Não existe o id prsente");
+                }
+                return existe;
             }
+
+        } catch (Exception e){
+            throw  new RuntimeException(e);
         }
-        return usuarioRepository.RemoverPaciente(id);
+
     }
 
-    public boolean atualizaInformacaoU(int id, String nome, String telefone, String email) throws SQLException{
+    public boolean atualizaInformacaoU(int id, String nome,String cpf, String telefone, String email, String senha) throws SQLException{
         try {
             if (id<0){
                 return false;
@@ -65,7 +80,7 @@ public class UsuarioService {
             if (nome.isEmpty() || telefone.isEmpty() || email.isEmpty()){
                 return false;
             }
-            return usuarioRepository.updanteUsuario(id,nome,telefone,email);
+            return usuarioRepository.updanteUsuario(id,nome,cpf,telefone,email, senha);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -73,3 +88,4 @@ public class UsuarioService {
     }
 
 }
+

@@ -16,7 +16,6 @@ import org.acme.service.UsuarioService;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 @Path("/doctorAjuda")
@@ -24,7 +23,11 @@ public class GreetingResource {
 
     @Inject
     UsuarioService usuarioService;
+
+    @Inject
     FuncionarioService funcionarioService;
+
+    @Inject
     ConsultaService consultaService;
 
     @POST
@@ -76,36 +79,50 @@ public class GreetingResource {
         }
     }
     @GET
-    @Path("/relatorio/paciente")
+    @Path("/relatorio/paciente/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response Relatorio_paciente(int id){
+    public Response Relatorio_paciente(
+            @PathParam("id") int id,
+            @QueryParam("email_usuario") String email_usuario,
+            @QueryParam("senha_usuario") String senha_usuario){
         try {
-            List<Usuario>l=usuarioService.existeUsuario(id);
+
+            List<Usuario>l=
+                    usuarioService.existeUsuario(
+                            id,
+                            email_usuario,
+                            senha_usuario
+                    );
+            if(l.isEmpty()){
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Paciente nao encontrado.").build();
+            }
+
             return Response.status(Response.Status.OK).entity(l).build();
+
         } catch (Exception e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao conectar").build();
         }
     }
+
     @GET
-    @Path("/relatorio/funcionario")
+    @Path("/relatorio/funcionario/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response Relatorio_funcionario(int id_funcionario){
+    public Response Relatorio_funcionario(
+            @PathParam("id") int id_funcionario,
+            @QueryParam("email_funcionario") String email_f,
+            @QueryParam("senha_funcionario") String senha_f){
         try {
-            List<Funcionario>l=funcionarioService.existeFuncionario(id_funcionario);
-            return Response.status(Response.Status.OK)
-                    .entity(l).build();
-        }catch (Exception e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao conectar").build();
-        }
-    }
-    @GET
-    @Path("/relatorio/Consulta")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response Relatorio_Consulta(int id_consulta, String nome_paciente){
-        try{
-            Set<Consulta>l= consultaService.existeConsulta(id_consulta,nome_paciente);
+            List<Funcionario>l=
+                    funcionarioService.existeFuncionario(
+                            id_funcionario,
+                            email_f,
+                            senha_f);
+            if (l.isEmpty()){
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Funcionario não encontrado").build();
+            }
             return Response.status(Response.Status.OK)
                     .entity(l).build();
         }catch (Exception e){
@@ -114,73 +131,104 @@ public class GreetingResource {
         }
     }
 
+    @GET
+    @Path("/relatorio/Consulta/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response Relatorio_Consulta(
+            @PathParam("id") int id_consulta,
+            @QueryParam("email_usuario") String email_usuario,
+            @QueryParam("senha_usuario") String senha_usuario){
+
+        try{
+            Set<Consulta>l= consultaService.existeConsulta(
+                    id_consulta,
+                    email_usuario,
+                    senha_usuario);
+            if (l.isEmpty()){
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Não existe nenhuma consulta nesse paciente.")
+                        .build();
+            }
+
+            return Response.status(Response.Status.OK)
+                    .entity(l).build();
+        }catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro no Server").build();
+        }
+    }
+
     @DELETE
     @Path("/deletar/paciente/{id}")
-    public Response RemoverUsuario (@PathParam("id") int id){
+    public Response RemoverUsuario (@PathParam("id") int id, UsuarioDTO usuarioDTO){
         try {
-            boolean deletado=usuarioService.RemoverIdUsuario(id);
+            boolean deletado=usuarioService.RemoverIdUsuario(id, usuarioDTO.getEmail_usuario(), usuarioDTO.getSenha_usuario());
             if (deletado){
                 return Response.status(Response.Status.OK)
                         .entity("deletado com sucesso").build();
             }else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                return Response.status(Response.Status.NOT_FOUND).entity("Id não encontrado").build();
             }
         }catch (IllegalAccessError e){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("O id não pode ser menor do que zero.").build();
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro no server.").build();
+        } catch (SQLException e){
+            throw new RuntimeException(e);
         }
     }
+
+
     @DELETE
     @Path("/deletar/funcionario/{id}")
-    public Response RemoverFuncionario (@PathParam("id") int id){
+    public Response RemoverFuncionario (@PathParam("id") int id, FuncionarioDTO funcionarioDTO){
         try {
-            boolean deletado=funcionarioService.RemoverId(id);
+            boolean deletado=funcionarioService.RemoverId(id, funcionarioDTO.getEmail_funcionario(), funcionarioDTO.getSenha_funcionario());
             if (deletado){
                 return Response.status(Response.Status.OK)
                         .entity("deletado com sucesso").build();
             }else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
         }catch (IllegalAccessError e){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("O id não pode ser menor do que zero.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro no server.").build();
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
     }
     @DELETE
-    @Path("/deletar/consulta/{id}")
-    public Response RemoverConsulta (@PathParam("id") int id){
+    @Path("/deletat/consulta/{id}")
+    public Response RemoverConsulta (@PathParam("id") int id, ConsultaDTO consultaDTO){
         try {
-            boolean deletado=consultaService.RemoverIdConsulta(id);
+            boolean deletado=consultaService.RemoverIdConsulta(id, consultaDTO.getEmail_usuario(), consultaDTO.getEmail_usuario());
             if (deletado){
                 return Response.status(Response.Status.OK)
                         .entity("deletado com sucesso").build();
             }else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                return Response.status(Response.Status.NOT_FOUND).entity("Não foi encontrado").build();
             }
         }catch (IllegalAccessError e){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("O id não pode ser menor do que zero.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro no server.").build();
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @PUT
-    @Path("/atualizar/paciente/{id}/{nome}/{telefone}/{email}")
-    public Response atualizarUsuario(@PathParam("id") int id , @PathParam("nome") String nome,
-                                  @PathParam("telefone") String telefone,
-                                  @PathParam("email") String email){
+    @Path("/atualizar/paciente/{id}")
+    public Response atualizarUsuario(@PathParam("id") int id , @QueryParam("nome") String nome,
+                                     @QueryParam("cpf") String cpf,
+                                     @QueryParam("telefone") String telefone,
+                                     @QueryParam("email") String email,
+                                     @QueryParam("senha_usuario") String senha_usuario){
         try{
-            boolean verificar=usuarioService.atualizaInformacaoU(id, nome,telefone,email);
+            boolean verificar=usuarioService.atualizaInformacaoU(id, nome,cpf,telefone,email, senha_usuario);
 
             if(verificar){
                 return Response.status(Response.Status.OK).entity("Dados alterdos com sucesso").build();
             }else{
-                return Response.status((Response.Status.NOT_FOUND)).entity("Deu ruim").build();
+                return Response.status((Response.Status.NOT_FOUND)).entity("ERRO").build();
             }
 
         }catch (SQLException e){
@@ -189,36 +237,39 @@ public class GreetingResource {
 
 
     @PUT
-    @Path("/atualizar/Funcionario/{id_funcionario}/{nome_funcionario}/{email}/{senha}")
+    @Path("/atualizar/Funcionario/{id_funcionario}")
     public Response atualizarFuncionario(@PathParam("id_funcionario") int id_funcionario,
-                                         @PathParam("nome_funcionario") String nome_funcionario,
-                                     @PathParam("email") String email,
-                                     @PathParam("senha") String senha) throws SQLException {
-        boolean verificar=funcionarioService.atualizarInformacaoF(id_funcionario, nome_funcionario,email,senha);
+                                         @QueryParam("nome_funcionario") String nome_funcionario,
+                                        @QueryParam("tipo_funcionario") String tipo_funcionario,
+                                        @QueryParam("email") String email,
+                                        @QueryParam("senha") String senha) throws SQLException {
+        boolean verificar=funcionarioService.atualizarInformacaoF(id_funcionario, nome_funcionario, tipo_funcionario,email,senha);
 
         if(verificar){
             return Response.status(Response.Status.OK).entity("Dados alterdos com sucesso").build();
         }else{
-            return Response.status((Response.Status.NOT_FOUND)).entity("Deu ruim").build();
+            return Response.status((Response.Status.NOT_FOUND)).entity("Erro").build();
         }
 
 
     }
 
     @PUT
-    @Path("/atualizar/Consulta/{id_consulta}/{nome_paciente}/{nome_funcionario}/{data_consulta}/{informacao_consulta}")
+    @Path("/atualizar/Consulta/{id_consulta}")
     public Response atualizarConsulta(@PathParam("id_consulta") int id_consulta,
-                                         @PathParam("nome_paciente") String nm_paciente,
-                                         @PathParam("email_paciente") String email_paciente,
-                                         @PathParam("nome_funcionario") String nm_funcionario,
-                                         @PathParam("data_consulta") String dt_consulta,
-                                         @PathParam("informacao_consulta") String in_consulta) throws SQLException {
-        boolean verificar=consultaService.atualizarInformacaoC(id_consulta, nm_paciente,email_paciente,nm_funcionario,dt_consulta,in_consulta);
+                                      @QueryParam("nome_paciente") String nm_paciente,
+                                      @QueryParam("email_paciente") String email_paciente,
+                                      @QueryParam("senha") String senha,
+                                      @QueryParam("nome_funcionario") String nm_funcionario,
+                                      @QueryParam("data_consulta") String dt_consulta,
+                                      @QueryParam("horas_consulta") String horas,
+                                      @QueryParam("informacao_consulta") String in_consulta) throws SQLException {
+        boolean verificar=consultaService.atualizarInformacaoC(id_consulta, nm_paciente,email_paciente,senha,nm_funcionario,dt_consulta, horas,in_consulta);
 
         if(verificar){
             return Response.status(Response.Status.OK).entity("Dados alterdos com sucesso").build();
         }else{
-            return Response.status((Response.Status.NOT_FOUND)).entity("Deu ruim").build();
+            return Response.status((Response.Status.NOT_FOUND)).entity("ERRO").build();
         }
 
     }

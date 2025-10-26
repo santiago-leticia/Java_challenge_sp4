@@ -16,15 +16,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@ApplicationScoped
 public class UsuarioRepository {
-    @ApplicationScoped
+
 
     /*create table T_RHSTU_PACIENTE(
     id_paciente NUMBER primary key, " +
     "nome_paciente VARCHAR(90), " +
     "cpf VARCHAR(180), " +
     "telefone VARCHAR(180),
-     email VARCHAR(180)";
+     email_usuario VARCHAR(180)
+     senha_usuario VARCHAR(180)";
     */
 
     @Inject
@@ -35,28 +37,35 @@ public class UsuarioRepository {
                     "nome_paciente, " +
                     "cpf, " +
                     "telefone," +
-                    "email) " +
-                    "values (?,?,?,?,?";
+                    "email_usuario, " +
+                    "senha_usuario) " +
+                    "values (?,?,?,?,?,?)";
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sqlI);
             ) {
-                ps.setString(2, usuario.getNome_usuario());
-                ps.setString(3, usuario.getCpf());
-                ps.setString(4, usuario.getTelefone());
-                ps.setString(5, usuario.getEmail_usuario());
+                ps.setString(1, usuario.getNome_usuario());
+                ps.setString(2, usuario.getCpf());
+                ps.setString(3, usuario.getTelefone());
+                ps.setString(4, usuario.getEmail_usuario());
+                ps.setString(5,usuario.getSenha_usuario());
                 ps.executeUpdate();
+
             } catch (SQLException e) {
-                throw new SQLException();
+                throw new SQLException(e);
             }
         }
 
-        public List<Usuario> RelatorioPaciente(int id_paciente) {
-            String sql = "select * from T_RHSTU_PACIENTE WHERE id_paciente=?";
+        public List<Usuario> RelatorioPaciente(int id_paciente, String email_u, String senha_u) {
+            String sql = "select * from T_RHSTU_PACIENTE WHERE id_paciente=? AND email_usuario=? AND senha_usuario=?";
             List<Usuario> l = new ArrayList<>();
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setInt(1,id_paciente);
+                ps.setString(2,email_u);
+                ps.setString(3,senha_u);
+
                 try( ResultSet rs = ps.executeQuery()) {
+
                     while (rs.next()) {
                         Usuario usuario = new Usuario();
                         usuario.setId_usuario(rs.getInt(1));
@@ -64,11 +73,14 @@ public class UsuarioRepository {
                         usuario.setCpf(rs.getString(3));
                         usuario.setTelefone(rs.getString(4));
                         usuario.setEmail_usuario(rs.getString(5));
+                        usuario.setSenha_usuario(rs.getString(6));
+
                         usuario.ler(rs.getInt(1),
                                 rs.getString(2),
                                 rs.getString(3),
                                 rs.getString(4),
-                                rs.getString(5)
+                                rs.getString(5),
+                                rs.getString(6)
                         );
                         l.add(usuario);
                     }
@@ -81,12 +93,15 @@ public class UsuarioRepository {
             return l;
         }
 
-        public boolean RemoverPaciente(int id) {
-            String sql = "DELETE FROM T_RHSTU_PACIENTE WHERE id_paciente=?";
+        public boolean RemoverPaciente(int id,String email_u, String senha_u) {
+            String sql = "DELETE FROM T_RHSTU_PACIENTE WHERE email_usuario=? AND senha_usuario=?";
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)
             ) {
                 ps.setInt(1, id);
+                ps.setString(2,email_u);
+                ps.setString(3,senha_u);
+
                 int linhasAfetadas= ps.executeUpdate();
                 return linhasAfetadas>0;
             }catch (SQLException e) {
@@ -94,19 +109,23 @@ public class UsuarioRepository {
             }
         }
 
-        public boolean updanteUsuario(int id, String nome, String telefone, String email){
+        public boolean updanteUsuario(int id, String nome,String cpf, String telefone, String email, String senha){
             String sql="UPDATE T_RHSTU_PACIENTE SET" +
                     "nome_paciente=?, " +
-                    "telefone=?, " +
-                    "email=?" +
+                    "cpf=?, " +
+                    "telefone=?," +
+                    "email_usuario=?, " +
+                    "senha_usuario=?" +
                     "WHERE id_paciente=?";
             try(Connection con= dataSource.getConnection();
                 PreparedStatement ps= con.prepareStatement(sql))
             {
                 ps.setString(1,nome);
+                ps.setString(3,cpf);
                 ps.setString(2, telefone);
                 ps.setString(3, email);
-                ps.setInt(4, id);
+                ps.setString(4,senha);
+                ps.setInt(5, id);
                 int linhasAlteradas=ps.executeUpdate();
                 return linhasAlteradas>0;
             }catch (SQLException e){

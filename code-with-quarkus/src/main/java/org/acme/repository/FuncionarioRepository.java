@@ -21,7 +21,7 @@ public class FuncionarioRepository {
     /*create table T_RHSTU_FUNCIONARIO("
     id_funcionario NUMBER primary key, " +
     "nome_funcionario VARCHAR(90),
-     tipo_funcionario" +
+     tipo_funcionario  VARCHAR(90)" +
     "email_paciente VARCHAR(180), "+
     "senha VARCHAR(180)";
     */
@@ -41,8 +41,8 @@ public class FuncionarioRepository {
         {
             ps.setString(1, funcionario.getNome_funcionario());
             ps.setString(2,funcionario.getTipo_funcionario());
-            ps.setString(3, funcionario.getEmail());
-            ps.setString(4, funcionario.getSenha());
+            ps.setString(3, funcionario.getEmail_funcionario());
+            ps.setString(4, funcionario.getSenha_usuario());
             ps.executeUpdate();
         }
         catch (SQLException e) {
@@ -50,13 +50,15 @@ public class FuncionarioRepository {
         }
     }
 
-    public List<Funcionario> RelatorioFuncionario(int id) {
+    public List<Funcionario> RelatorioFuncionario(int id,  String email_f, String s_f) {
         String sql = "select * from T_RHSTU_FUNCIONARIO WHERE id_funcionario=?";
         List<Funcionario> l = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
             ps.setInt(1,id);
+            ps.setString(2,email_f);
+            ps.setString(3,s_f);
             try(ResultSet rs = ps.executeQuery();) {
                 while (rs.next()) {
                     Funcionario funcionario = new Funcionario();
@@ -64,7 +66,7 @@ public class FuncionarioRepository {
                     funcionario.setNome_funcionario(rs.getString(2));
                     funcionario.setTipo_funcionario(rs.getString(3));
                     funcionario.setEmail_funcionario(rs.getString(4));
-                    funcionario.setSenha(rs.getString(5));
+                    funcionario.setSenha_funcionario(rs.getString(5));
                     l.add(funcionario);
                     funcionario.lerFuncionario(
                             rs.getInt(1),
@@ -81,12 +83,14 @@ public class FuncionarioRepository {
         return l;
     }
 
-    public boolean RemoverFuncionario(int id) {
+    public boolean RemoverFuncionario(int id, String email_f, String s_f) {
         String sql = "DELETE FROM T_RHSTU_FUNCIONARIO WHERE id_funcionario=?";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
             ps.setInt(1, id);
+            ps.setString(2,email_f);
+            ps.setString(3,s_f);
             int linhasAfetadas= ps.executeUpdate();
             return linhasAfetadas>0;
         }catch (SQLException e) {
@@ -115,4 +119,5 @@ public class FuncionarioRepository {
         }
     }
 }
+
 

@@ -5,7 +5,7 @@ public class Funcionario extends Usuario {
     private String nome_funcionario;
     private String tipo_funcionario;
     private String email_funcionario;
-    private String senha;
+    private String senha_funcionario;
 
     public Funcionario() {}
 
@@ -41,12 +41,12 @@ public class Funcionario extends Usuario {
         this.email_funcionario = email_funcionario;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getSenha_funcionario() {
+        return senha_funcionario;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setSenha_funcionario(String senha_funcionario) {
+        this.senha_funcionario = senha_funcionario;
     }
 
     public void lerFuncionario(int id, String nm, String tf, String email, String senha ){

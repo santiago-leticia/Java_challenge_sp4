@@ -3,8 +3,8 @@ package org.acme.model.DTO;
 public class FuncionarioDTO extends UsuarioDTO {
     private String nome_funcionario;
     private String tipo_funcionario;
-    private String email;
-    private String senha;
+    private String email_funcionario;
+    private String senha_funcionario;
 
     public FuncionarioDTO() {}
 
@@ -24,19 +24,19 @@ public class FuncionarioDTO extends UsuarioDTO {
         this.tipo_funcionario = tipo_funcionario;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmail_funcionario() {
+        return email_funcionario;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail_funcionario(String email_funcionario) {
+        this.email_funcionario = email_funcionario;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getSenha_funcionario() {
+        return senha_funcionario;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setSenha_funcionario(String senha_funcionario) {
+        this.senha_funcionario = senha_funcionario;
     }
 }

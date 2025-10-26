@@ -3,6 +3,7 @@ package org.acme.model;
 public class Consulta extends Funcionario {
     private int id_consulta;
     private String data_consulta;
+    private String horas_consulta;
     private String informacao_consulta;
 
     public Consulta() {
@@ -24,6 +25,14 @@ public class Consulta extends Funcionario {
         this.data_consulta = data_consulta;
     }
 
+    public String getHoras_consulta() {
+        return horas_consulta;
+    }
+
+    public void setHoras_consulta(String horas_consulta) {
+        this.horas_consulta = horas_consulta;
+    }
+
     public String getInformacao_consulta() {
         return informacao_consulta;
     }
@@ -31,12 +40,14 @@ public class Consulta extends Funcionario {
     public void setInformacao_consulta(String informacao_consulta) {
         this.informacao_consulta = informacao_consulta;
     }
-    public void lerConsulta(int id, String nm_paciente,String email, String nm_funcionario, String dt_consulta, String in_c){
+
+    public void lerConsulta(int id, String nm_paciente,String email, String nm_funcionario, String dt_consulta, String in_c, String horas){
         System.out.println("ID do Consulta: " + id);
         System.out.println("Nome do Paciente: " + nm_paciente);
         System.out.println("Email do paciente: "+ email);
         System.out.println("Nome do Funcionario: "+nm_funcionario);
         System.out.println("Data da consulta: " +dt_consulta);
+        System.out.println("Horas: "+ horas);
         System.out.println("Informacao da consulta: " +in_c);
     }
 }

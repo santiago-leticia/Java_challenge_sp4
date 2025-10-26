@@ -19,9 +19,9 @@ public class FuncionarioService{
         try{
             if (funcionario.getNome_funcionario().isEmpty()){
                 return false;
-            } else if (funcionario.getEmail().isEmpty()){
+            } else if (funcionario.getEmail_funcionario().isEmpty()){
                 return false;
-            } else if (funcionario.getSenha().isEmpty()) {
+            } else if (funcionario.getSenha_usuario().isEmpty()) {
                 return false;
             }
             funcionarioRepository.inserirFuncionario(funcionario);
@@ -31,31 +31,32 @@ public class FuncionarioService{
         }
     }
 
-    public List<Funcionario> existeFuncionario(int id) throws SQLException{
+    public List<Funcionario> existeFuncionario(int id, String email_f, String s_f) throws SQLException{
         try {
-            List<Funcionario> temS_N= funcionarioRepository.RelatorioFuncionario(id);
+            List<Funcionario> temS_N= funcionarioRepository.RelatorioFuncionario(id, email_f, s_f);
             if (temS_N.isEmpty()){
                 System.out.println("Não existe um funcionario com esse id.");
+                return List.of();
             }else {
                 System.out.println("Funcionario encontrado");
-                return funcionarioRepository.RelatorioFuncionario(id);
+                return temS_N;
             }
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-        return List.of();
+
     }
 
-    public boolean RemoverId(int id ) throws SQLException{
+    public boolean RemoverId(int id, String email, String senha) throws SQLException{
         try {
             if (id<0){
                 throw new IllegalAccessError("O id invalido");
             }else {
-                boolean existe=funcionarioRepository.RemoverFuncionario(id);
+                boolean existe=funcionarioRepository.RemoverFuncionario(id, email, senha);
                 if(!existe){
                     System.out.println("Não existe, esse id para excluir.");
                 }
-                return funcionarioRepository.RemoverFuncionario(id);
+                return existe;
             }
         } catch (Exception e){
             throw new RuntimeException(e);
@@ -63,15 +64,15 @@ public class FuncionarioService{
 
     }
 
-    public boolean atualizarInformacaoF(int id, String nome_funcionario,String email, String senha){
+    public boolean atualizarInformacaoF(int id, String nome_funcionario,String tipo_funcionario,String email, String senha){
         try {
             if (id<0){
                 return false;
             }
-            if (nome_funcionario.isEmpty() || email.isEmpty() || senha.isEmpty()){
+            if (nome_funcionario.isEmpty() || tipo_funcionario.isEmpty() || email.isEmpty() || senha.isEmpty()){
                 return false;
             }
-            return funcionarioRepository.updanteFuncionario(id,nome_funcionario,email,senha);
+            return funcionarioRepository.updanteFuncionario(id,nome_funcionario,tipo_funcionario,email,senha);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
