@@ -1,8 +1,8 @@
 package org.acme.repository;
 
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.acme.model.Consulta;
 import org.acme.model.DTO.UsuarioDTO;
 import org.acme.model.Usuario;
 
@@ -12,34 +12,35 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+
 
 @ApplicationScoped
 public class UsuarioRepository {
 
 
-    /*create table T_RHSTU_PACIENTE(
-    id_paciente NUMBER primary key, " +
-    "nome_paciente VARCHAR(90), " +
-    "cpf VARCHAR(180), " +
-    "telefone VARCHAR(180),
-     email_usuario VARCHAR(180)
-     senha_usuario VARCHAR(180)";
+    /*CREATE TABLE T_RHSTU_PACIENTE (
+    id_paciente NUMBER(9)PRIMARY KEY,
+    nm_paciente VARCHAR2(90),
+    nr_cpf VARCHAR2(14),
+    nr_telefone_paciente VARCHAR2(20),
+    ds_email_paciente VARCHAR2(100),
+    ds_senha_paciente VARCHAR2(60)
+);
     */
 
     @Inject
     DataSource dataSource;
 
     public void inserirPaciente(UsuarioDTO usuario) throws SQLException {
-        String sqlI = "insert into T_RHSTU_PACIENTE (" +
-                    "nome_paciente, " +
-                    "cpf, " +
-                    "telefone," +
-                    "email_usuario, " +
-                    "senha_usuario) " +
-                    "values (?,?,?,?,?,?)";
+        String sqlI = "INSERT INTO T_RHSTU_PACIENTE (" +
+                    "nm_paciente, " +
+                    "nr_cpf, " +
+                    "nr_telefone_paciente," +
+                    "ds_email_paciente, " +
+                    "ds_senha_paciente) " +
+                    "VALUES (?,?,?,?,?,?)";
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sqlI);
             ) {
@@ -47,7 +48,7 @@ public class UsuarioRepository {
                 ps.setString(2, usuario.getCpf());
                 ps.setString(3, usuario.getTelefone());
                 ps.setString(4, usuario.getEmail_usuario());
-                ps.setString(5,usuario.getSenha_usuario());
+                ps.setString(5, usuario.getSenha_usuario());
                 ps.executeUpdate();
 
             } catch (SQLException e) {
@@ -56,7 +57,7 @@ public class UsuarioRepository {
         }
 
         public List<Usuario> RelatorioPaciente(int id_paciente, String email_u, String senha_u) {
-            String sql = "select * from T_RHSTU_PACIENTE WHERE id_paciente=? AND email_usuario=? AND senha_usuario=?";
+            String sql = "select * from T_RHSTU_PACIENTE WHERE id_paciente=? AND ds_email_paciente=? AND ds_senha_paciente=?";
             List<Usuario> l = new ArrayList<>();
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)) {
@@ -94,7 +95,7 @@ public class UsuarioRepository {
         }
 
         public boolean RemoverPaciente(int id,String email_u, String senha_u) {
-            String sql = "DELETE FROM T_RHSTU_PACIENTE WHERE email_usuario=? AND senha_usuario=?";
+            String sql = "DELETE FROM T_RHSTU_PACIENTE WHERE id_paciente=? AND ds_email_paciente=? AND ds_senha_paciente=?";
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)
             ) {
@@ -111,11 +112,11 @@ public class UsuarioRepository {
 
         public boolean updanteUsuario(int id, String nome,String cpf, String telefone, String email, String senha){
             String sql="UPDATE T_RHSTU_PACIENTE SET" +
-                    "nome_paciente=?, " +
-                    "cpf=?, " +
-                    "telefone=?," +
-                    "email_usuario=?, " +
-                    "senha_usuario=?" +
+                    "nm_paciente=?, " +
+                    "nr_cpf=?, " +
+                    "nr_telefone_paciente=?," +
+                    "ds_email_paciente=?, " +
+                    "ds_senha_paciente=?" +
                     "WHERE id_paciente=?";
             try(Connection con= dataSource.getConnection();
                 PreparedStatement ps= con.prepareStatement(sql))

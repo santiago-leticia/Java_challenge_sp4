@@ -18,12 +18,13 @@ import java.util.Set;
 @ApplicationScoped
 public class FuncionarioRepository {
 
-    /*create table T_RHSTU_FUNCIONARIO("
-    id_funcionario NUMBER primary key, " +
-    "nome_funcionario VARCHAR(90),
-     tipo_funcionario  VARCHAR(90)" +
-    "email_paciente VARCHAR(180), "+
-    "senha VARCHAR(180)";
+    /*CREATE TABLE T_RHSTU_FUNCIONARIO(
+    id_funcionario NUMBER(9) primary key,
+    nm_funcionario VARCHAR(90),
+    tp_funcionario  VARCHAR(90),
+    ds_email_funcionario VARCHAR(100),
+    ds_senha_funcionario VARCHAR(60)
+    );
     */
     @Inject
     DataSource dataSource;
@@ -31,10 +32,10 @@ public class FuncionarioRepository {
     public void inserirFuncionario(FuncionarioDTO funcionario) throws SQLException {
         String sqlI = "insert into T_RHSTU_FUNCIONARIO (" +
                 "id_funcionario, " +
-                "nome_funcionario," +
-                "tipo_funcionario " +
-                "email, " +
-                "senha " +
+                "nm_funcionario," +
+                "tp_funcionario " +
+                "ds_email_funcionario, " +
+                "ds_senha_funcionario " +
                 "values (?,?,?, ?,?)";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sqlI))
@@ -51,7 +52,7 @@ public class FuncionarioRepository {
     }
 
     public List<Funcionario> RelatorioFuncionario(int id,  String email_f, String s_f) {
-        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE id_funcionario=?";
+        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE id_funcionario=? AND ds_email_funcionario AND ds_senha_funcionario";
         List<Funcionario> l = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
@@ -84,7 +85,7 @@ public class FuncionarioRepository {
     }
 
     public boolean RemoverFuncionario(int id, String email_f, String s_f) {
-        String sql = "DELETE FROM T_RHSTU_FUNCIONARIO WHERE id_funcionario=?";
+        String sql = "DELETE FROM T_RHSTU_FUNCIONARIO WHERE id_funcionario=? AND ds_email_funcionario=?  AND ds_senha_funcionario=?";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
@@ -100,10 +101,10 @@ public class FuncionarioRepository {
 
     public boolean updanteFuncionario(int id_funcionario, String nome_funcionario,String tipo_funcionario, String email_funcionario, String senha_funcionario){
         String sql="UPDATE T_RHSTU_FUNCIONARIO SET" +
-                "nome_funcionario=?," +
-                "tipo_funcionario=? " +
-                "email=?, " +
-                "senha=?" +
+                "nm_funcionario=?," +
+                "tp_funcionario=? " +
+                "ds_email_funcionario=?, " +
+                "ds_senha_funcionario=?" +
                 "WHERE id_funcionario=?";
         try(Connection con= dataSource.getConnection();
             PreparedStatement ps= con.prepareStatement(sql)) {

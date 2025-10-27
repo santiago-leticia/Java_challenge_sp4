@@ -19,41 +19,36 @@ import java.util.Set;
 @ApplicationScoped
 public class ConsultaRepository {
 
-    /*create table T_RHSTU_CONSULTA("
-    id_consulta NUMBER primary key, " +
-    "nome_paciente VARCHAR(90) REFERENCES T_RHSTU_PACIENTE(nome_paciente),
-    email_paciente VARCHAR(180) REFERENCES T_RHSTU_PACIENTE(email_paciente),
-    senha_paciente VARCHAR(60) REFERENCES T_RHSTU_PACIENTE(senha_paciente)" +
-    "nome_funcionario VARCHAR(180) REFERENCES T_RHSTU_FUNCIONARIO(nome_funcionario), " +
-    "data_consulta DATE,
-    horas_cosnsulta time,
-    informacao_consulta VARCHAR(180)";
-    */
+    /*    CREATE TABLE T_RHSTU_CONSULTA(
+    id_consulta  NUMBER(9) PRIMARY KEY,
+    id_paciente  NUMBER(9) REFERENCES T_RHSTU_PACIENTE(id_paciente),
+    id_funcionario NUMBER(9) REFERENCES T_RHSTU_FUNCIONARIO(id_funcionario),
+    dt_consulta DATE,
+    hr_consulta VARCHAR(5),
+    ds_informacoes VARCHAR(100)
+);
+  */
 
     @Inject
     DataSource dataSource;
 
 
-    public void inserirConsulta(ConsultaDTO consulta) throws SQLException {
+    public void inserirConsulta(Consulta consulta) throws SQLException {
         String sqlI = "insert into T_RHSTU_consulta (" +
-                "nome_paciente, " +
-                "nome_funcionario," +
-                "email_paciente," +
-                "senha_paciente, " +
-                "data_consulta," +
-                "horas_consulta, " +
-                "informacao_consulta) " +
-                "values (?,?,?,?, TO_DATE(?, 'DD-MM-YYYY'),?,?)";
+                "id_paciente, " +
+                "id_funcionario," +
+                "dt_consulta," +
+                "hr_consulta, " +
+                "ds_informacoes)" +
+                "values (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?)";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sqlI);
         ) {
-            ps.setString(1, consulta.getNome_usuario());
-            ps.setString(2, consulta.getEmail_usuario());
-            ps.setString(3, consulta.getNome_funcionario());
-            ps.setString(4,consulta.getSenha_usuario());
-            ps.setString(5, consulta.getData_consulta());
-            ps.setString(6, consulta.getHoras_consultas());
-            ps.setString(7, consulta.getInformacao_consulta());
+            ps.setInt(1, consulta.getId_usuario());
+            ps.setInt(2, consulta.getId_funcionario());
+            ps.setString(3, consulta.getData_consulta());
+            ps.setString(4,consulta.getHoras_consulta());
+            ps.setString(5, consulta.getInformacao_consulta());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException();
@@ -62,7 +57,20 @@ public class ConsultaRepository {
 
 
     public Set<Consulta> RelatorioConsulta(int id_c, String email, String senha) throws SQLException {
-        String sql = "select * from T_RHSTU_consulta WHERE id_consulta= ? AND email_paciente=? AND senha_paciente=? ";
+        String sql = "SELECT " +
+                "c.id_consulta, " +
+                "c.dt_consulta," +
+                "c.hr_consulta," +
+                "ds_informacoes," +
+                "p.ds_email_paciente, " +
+                "p.ds_senha_paciente, " +
+                "f.nm_funcionario " +
+                "FROM " +
+                "   T_RHSTU_CONSULTA c, " +
+                "   T_RHSTU_PACIENTE p, " +
+                "   T_RHSTU_FUNCIONARIO f " +
+                "WHERE c.id_paciente = p.id_paciente AND c.id_funcionario = f.id_funcionario" +
+                " c.id_consulta=? AND p.ds_email_paciente=? AND p.ds_senha_paciente=? ";
         Set<Consulta> l = new HashSet<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)
@@ -86,9 +94,11 @@ public class ConsultaRepository {
 
                     l.add(consulta);
 
-                    consulta.lerConsulta(rs.getInt(1), rs.getString(2),
+                    consulta.lerConsulta(rs.getInt(1),
+                            rs.getString(2),
                             rs.getString(3),
-                            rs.getString(4), rs.getString(5),
+                            rs.getString(4),
+                            rs.getString(5),
                             rs.getString(6),
                             rs.getString(7));
                 }
@@ -100,7 +110,7 @@ public class ConsultaRepository {
     }
 
     public boolean RemoverConsulta(int id_consulta, String email_paciente, String s_p) throws SQLException {
-        String sql = "DELETE FROM T_RHSTU_consulta WHERE id_consulta=? AND email_paciente=? AND senha_paciente=?";
+        String sql = "DELETE FROM T_RHSTU_consulta WHERE id_consulta=? AND id_paciente IN (select from T_RHSTU_PACIENTE WHERE ds_email_paciente=? AND ds_senha_paciente=?)";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
@@ -115,26 +125,18 @@ public class ConsultaRepository {
         }
     }
 
-    public boolean updanteConsulta(int id_c, String n_u, String email, String senha, String n_f, String d_c, String horas, String i_c) throws SQLException{
+    public boolean updanteConsulta(int id_c, String d_c, String horas, String i_c) throws SQLException{
         String sql="UPDATE T_RHSTU_consulta SET" +
-                "nome_paciente=?, " +
-                "email_paciente=?," +
-                "senha_paciente=? " +
-                "nome_funcionario=?, " +
-                "data_consulta= TO_DATE(?, 'YYYY-MM-DD)'," +
-                "horas_consulta=? " +
-                "informacao_consulta=?," +
+                "dt_consulta= TO_DATE(?, 'YYYY-MM-DD'), " +
+                "hr_cosnsulta=?, " +
+                "ds_informacoes=? " +
                 "WHERE id_consulta=?";
         try(Connection con= dataSource.getConnection();
             PreparedStatement ps= con.prepareStatement(sql)) {
-            ps.setString(1,n_u);
-            ps.setString(2,email);
-            ps.setString(3,senha);
-            ps.setString(4, n_f);
-            ps.setString(5, d_c);
-            ps.setString(6,horas);
-            ps.setString(7,i_c);
-            ps.setInt(8, id_c);
+            ps.setString(1, d_c);
+            ps.setString(2,horas);
+            ps.setString(3,i_c);
+            ps.setInt(4, id_c);
 
             int linhasAfetadas = ps.executeUpdate();
             return linhasAfetadas>0;

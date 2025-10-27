@@ -15,6 +15,7 @@ import org.acme.service.FuncionarioService;
 import org.acme.service.UsuarioService;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -33,11 +34,11 @@ public class GreetingResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/cadastrarPaciente")
+    @Path("/cadastrar/paciente")
     public Response cadastraPaciente(UsuarioDTO usuario) throws SQLException{
         try{boolean ver= usuarioService.cadastraUsuario(usuario);
             if (ver){
-                return Response.status(Response.Status.OK).entity("ok").build();
+                return Response.status(Response.Status.CREATED).entity("Paciente cadastrado").build();
             }
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Usuario vazio").build();
         }catch (Exception e){
@@ -49,11 +50,11 @@ public class GreetingResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/cadastrarFuncionario")
+    @Path("/cadastrar/funcionario")
     public Response cadastraFuncionario(FuncionarioDTO funcionario) throws SQLException{
         try{boolean ver= funcionarioService.cadastraFuncionario(funcionario);
             if (ver){
-                return Response.status(Response.Status.OK).entity("ok").build();
+                return Response.status(Response.Status.CREATED).entity("Funcionario cadastrado.").build();
             }
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Funcionario vazio").build();
         }catch (Exception e){
@@ -65,11 +66,11 @@ public class GreetingResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/cadastrarConsulta")
-    public Response cadastraConsulta(ConsultaDTO consulta) throws SQLException{
+    @Path("/cadastrar/consulta")
+    public Response cadastraConsulta(Consulta consulta) throws SQLException{
         try{boolean ver= consultaService.cadastraConsulta(consulta);
             if (ver){
-                return Response.status(Response.Status.OK).entity("ok").build();
+                return Response.status(Response.Status.CREATED).entity("Consulta cadastrada.").build();
             }
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Consulta vazio").build();
         }catch (Exception e){
@@ -132,7 +133,7 @@ public class GreetingResource {
     }
 
     @GET
-    @Path("/relatorio/Consulta/{id}")
+    @Path("/relatorio/consulta/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response Relatorio_Consulta(
             @PathParam("id") int id_consulta,
@@ -197,7 +198,7 @@ public class GreetingResource {
         }
     }
     @DELETE
-    @Path("/deletat/consulta/{id}")
+    @Path("/deletar/consulta/{id}")
     public Response RemoverConsulta (@PathParam("id") int id, ConsultaDTO consultaDTO){
         try {
             boolean deletado=consultaService.RemoverIdConsulta(id, consultaDTO.getEmail_usuario(), consultaDTO.getEmail_usuario());
@@ -237,7 +238,7 @@ public class GreetingResource {
 
 
     @PUT
-    @Path("/atualizar/Funcionario/{id_funcionario}")
+    @Path("/atualizar/funcionario/{id_funcionario}")
     public Response atualizarFuncionario(@PathParam("id_funcionario") int id_funcionario,
                                          @QueryParam("nome_funcionario") String nome_funcionario,
                                         @QueryParam("tipo_funcionario") String tipo_funcionario,
@@ -255,16 +256,12 @@ public class GreetingResource {
     }
 
     @PUT
-    @Path("/atualizar/Consulta/{id_consulta}")
+    @Path("/atualizar/consulta/{id_consulta}")
     public Response atualizarConsulta(@PathParam("id_consulta") int id_consulta,
-                                      @QueryParam("nome_paciente") String nm_paciente,
-                                      @QueryParam("email_paciente") String email_paciente,
-                                      @QueryParam("senha") String senha,
-                                      @QueryParam("nome_funcionario") String nm_funcionario,
-                                      @QueryParam("data_consulta") String dt_consulta,
+                                      @QueryParam("data_consulta") String d_c,
                                       @QueryParam("horas_consulta") String horas,
                                       @QueryParam("informacao_consulta") String in_consulta) throws SQLException {
-        boolean verificar=consultaService.atualizarInformacaoC(id_consulta, nm_paciente,email_paciente,senha,nm_funcionario,dt_consulta, horas,in_consulta);
+        boolean verificar=consultaService.atualizarInformacaoC(id_consulta, d_c,horas,in_consulta);
 
         if(verificar){
             return Response.status(Response.Status.OK).entity("Dados alterdos com sucesso").build();

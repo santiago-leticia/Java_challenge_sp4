@@ -17,20 +17,16 @@ public class ConsultaService {
     ConsultaRepository consultaRepository;
 
 
-    public boolean cadastraConsulta(ConsultaDTO consultaDTO) throws SQLException {
+    public boolean cadastraConsulta(Consulta consulta) throws SQLException {
         try{
-            if (consultaDTO.getNome_usuario().isEmpty()){
+             if (consulta.getData_consulta().isEmpty()) {
                 return false;
-            } else if (consultaDTO.getNome_funcionario().isEmpty()){
+            }else if (consulta.getHoras_consulta().isEmpty()){
                 return false;
-            } else if (consultaDTO.getData_consulta().isEmpty()) {
-                return false;
-            }else if (consultaDTO.getHoras_consultas().isEmpty()){
-                return false;
-            } else if (consultaDTO.getInformacao_consulta().isEmpty()){
+            } else if (consulta.getInformacao_consulta().isEmpty()){
                 return false;
             }
-            consultaRepository.inserirConsulta(consultaDTO);
+            consultaRepository.inserirConsulta(consulta);
             return true;
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -69,15 +65,15 @@ public class ConsultaService {
 
     }
 
-    public boolean atualizarInformacaoC(int id_c, String n_u, String email, String senha, String n_f, String d_c, String h_c, String i_c){
+    public boolean atualizarInformacaoC(int id_c, String d_c, String h_c, String i_c){
         try {
             if (id_c<0){
                 return false;
             }
-            if (n_u.isEmpty() || email.isEmpty() || n_f.isEmpty() || d_c.isEmpty() || h_c.isEmpty() || i_c.isEmpty()){
+            if ( d_c.isEmpty() || h_c.isEmpty() || i_c.isEmpty()){
                 return false;
             }
-            return consultaRepository.updanteConsulta(id_c,n_u, email,senha,n_f, d_c, h_c, i_c);
+            return consultaRepository.updanteConsulta(id_c, d_c, h_c, i_c);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
