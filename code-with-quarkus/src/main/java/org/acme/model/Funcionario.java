@@ -9,6 +9,15 @@ public class Funcionario extends Usuario {
 
     public Funcionario() {}
 
+    public Funcionario(int id_usuario, String nome_usuario, String cpf, String telefone, String email_usuario, String senha_usuario, int id_funcionario, String nome_funcionario, String tipo_funcionario, String email_funcionario, String senha_funcionario) {
+        super(id_usuario, nome_usuario, cpf, telefone, email_usuario, senha_usuario);
+        this.id_funcionario = id_funcionario;
+        this.nome_funcionario = nome_funcionario;
+        this.tipo_funcionario = tipo_funcionario;
+        this.email_funcionario = email_funcionario;
+        this.senha_funcionario = senha_funcionario;
+    }
+
     public int getId_funcionario() {
         return id_funcionario;
     }

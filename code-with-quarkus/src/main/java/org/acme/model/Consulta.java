@@ -9,6 +9,14 @@ public class Consulta extends Funcionario {
     public Consulta() {
     }
 
+    public Consulta(int id_usuario, String nome_usuario, String cpf, String telefone, String email_usuario, String senha_usuario, int id_funcionario, String nome_funcionario, String tipo_funcionario, String email_funcionario, String senha_funcionario, int id_consulta, String data_consulta, String horas_consulta, String informacao_consulta) {
+        super(id_usuario, nome_usuario, cpf, telefone, email_usuario, senha_usuario, id_funcionario, nome_funcionario, tipo_funcionario, email_funcionario, senha_funcionario);
+        this.id_consulta = id_consulta;
+        this.data_consulta = data_consulta;
+        this.horas_consulta = horas_consulta;
+        this.informacao_consulta = informacao_consulta;
+    }
+
     public int getId_consulta() {
         return id_consulta;
     }

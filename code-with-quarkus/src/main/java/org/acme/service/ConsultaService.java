@@ -8,6 +8,7 @@ import org.acme.repository.ConsultaRepository;
 
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 @ApplicationScoped
@@ -17,65 +18,116 @@ public class ConsultaService {
     ConsultaRepository consultaRepository;
 
 
-    public boolean cadastraConsulta(Consulta consulta) throws SQLException {
-        try{
-             if (consulta.getData_consulta().isEmpty()) {
-                return false;
-            }else if (consulta.getHoras_consulta().isEmpty()){
-                return false;
-            } else if (consulta.getInformacao_consulta().isEmpty()){
-                return false;
-            }
-            consultaRepository.inserirConsulta(consulta);
-            return true;
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
     public Set<Consulta> existeConsulta(int id, String email_u, String senha_u) throws SQLException{
         try {
-            Set<Consulta> temS_N= consultaRepository.RelatorioConsulta(id,email_u,senha_u);
-            if (temS_N.isEmpty()){
-                System.out.println("Não existe uma consulta com esse id.");
-                return Set.of();
-            }else {
-                System.out.println("consulta encontrado");
+            valiacaoRelatorioConsulta(id, email_u, senha_u);
+            consultaRepository.RelatorioConsulta(id, email_u, senha_u);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        return Set.of();
+    }
+
+    public Set<Consulta> valiacaoRelatorioConsulta(int id, String email_u, String senha_u){
+        try {
+            Set<Consulta> existe= consultaRepository.RelatorioConsulta(id, email_u, senha_u);
+            if (existe==null || existe.isEmpty()){
+                throw new IllegalArgumentException("Não existe");
             }
-            return temS_N;
+            if (id<0){
+                throw new IllegalArgumentException("ID invalido");
+            }
+            if (email_u==null || email_u.isEmpty()){
+                throw new IllegalArgumentException("Email invalido");
+            }
+            if (senha_u==null || senha_u.isEmpty()){
+                throw new IllegalArgumentException("Senha invalido");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return Set.of();
+    }
+
+    public void cadastraConsulta(ConsultaDTO consulta) throws SQLException {
+        try{
+            valiacaoCadastra(consulta);
+            consultaRepository.inserirConsulta(consulta);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
     }
+    public void valiacaoCadastra(ConsultaDTO consulta){
+        if (consulta==null || consulta.getId_paciente()<0){
+            throw new IllegalArgumentException("Id do paciente incorreto");
+        }
+        if (consulta==null || consulta.getId_funcionario()<0){
+            throw new IllegalArgumentException("Id funcionario incorreto");
+        }
+        if (consulta.getData_consulta()==null || consulta.getData_consulta().isEmpty()){
+            throw new IllegalArgumentException("Data da consulta incorreta");
+        }
+        if (consulta.getHoras_consultas()==null || consulta.getHoras_consultas().isEmpty()){
+            throw new IllegalArgumentException("Hora incorreta");
+        }
+        if (consulta.getInformacao_consulta()==null || consulta.getInformacao_consulta().isEmpty()){
+            throw new IllegalArgumentException("Informação sobre a consulta incorreta");
+        }
+    }
 
-    public boolean RemoverIdConsulta(int id, String email_consulta, String senha_consulta) throws SQLException{
+    public void RemoverIdConsulta(int id, String email_consulta, String senha_consulta) throws SQLException{
         try {
-            if (id<=0){
-                throw new IllegalAccessError("O id invalido");
-            }else {
-                boolean existe=consultaRepository.RemoverConsulta(id,email_consulta,senha_consulta);
-                if(!existe){
-                    System.out.println("Não existe, esse id para excluir.");
-                }
-                return existe;
-            }
+            valiacaoRemover(id, email_consulta, senha_consulta);
+            consultaRepository.RemoverConsulta(id, email_consulta, senha_consulta);
         } catch (Exception e){
             throw new RuntimeException(e);
         }
-
+    }
+    public void valiacaoRemover(int id, String email_consulta, String senha_consulta){
+        try{
+            if (id<0){
+                throw  new IllegalAccessError("Id está incorreta");
+            }
+            if (email_consulta==null || email_consulta.isEmpty()){
+                throw new IllegalArgumentException("Email do paciente incorreto");
+            }
+            if (senha_consulta==null || senha_consulta.isEmpty()){
+                throw new IllegalArgumentException("Senha incorreta");
+            }
+            boolean e=consultaRepository.RemoverConsulta(id, email_consulta, senha_consulta);
+            if (!e){
+                throw new IllegalArgumentException("Não achando");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public boolean atualizarInformacaoC(int id_c, String d_c, String h_c, String i_c){
+    public void atualizarInformacaoC(int id_c, String d_c, String h_c, String i_c){
         try {
-            if (id_c<0){
-                return false;
-            }
-            if ( d_c.isEmpty() || h_c.isEmpty() || i_c.isEmpty()){
-                return false;
-            }
-            return consultaRepository.updanteConsulta(id_c, d_c, h_c, i_c);
+            valiacaoAtualizarC(id_c, d_c, h_c, i_c);
+            consultaRepository.updanteConsulta(id_c, d_c, h_c, i_c);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
+    }
+    public  void valiacaoAtualizarC(int id_c, String d_c, String h_c, String i_c){
+        try{
+            if (id_c<0){
+                throw new IllegalArgumentException("Id não pode ser menor do que zero.");
+            }
+            if (d_c.isEmpty()){
+                throw new IllegalArgumentException("Data da consulta está incorreta");
+            }
+            if (h_c.isEmpty()){
+                throw new IllegalArgumentException("horário da consulta está incorreta");
+            }
+            if (i_c.isEmpty()){
+                throw new IllegalArgumentException("Informação da consulta está incorreto");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

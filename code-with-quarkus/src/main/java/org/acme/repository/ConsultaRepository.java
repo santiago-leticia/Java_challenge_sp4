@@ -33,7 +33,7 @@ public class ConsultaRepository {
     DataSource dataSource;
 
 
-    public void inserirConsulta(Consulta consulta) throws SQLException {
+    public void inserirConsulta(ConsultaDTO consulta) throws SQLException {
         String sqlI = "insert into T_RHSTU_consulta (" +
                 "id_paciente, " +
                 "id_funcionario," +
@@ -44,10 +44,10 @@ public class ConsultaRepository {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sqlI);
         ) {
-            ps.setInt(1, consulta.getId_usuario());
+            ps.setInt(1, consulta.getId_paciente());
             ps.setInt(2, consulta.getId_funcionario());
             ps.setString(3, consulta.getData_consulta());
-            ps.setString(4,consulta.getHoras_consulta());
+            ps.setString(4,consulta.getHoras_consultas());
             ps.setString(5, consulta.getInformacao_consulta());
             ps.executeUpdate();
         } catch (SQLException e) {

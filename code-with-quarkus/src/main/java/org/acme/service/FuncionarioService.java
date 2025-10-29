@@ -15,66 +15,112 @@ public class FuncionarioService{
     @Inject
     FuncionarioRepository funcionarioRepository;
 
-    public boolean cadastraFuncionario(FuncionarioDTO funcionario) throws SQLException{
+    public void cadastraFuncionario(FuncionarioDTO funcionario) throws SQLException{
         try{
-            if (funcionario.getNome_funcionario().isEmpty()){
-                return false;
-            } else if (funcionario.getEmail_funcionario().isEmpty()){
-                return false;
-            } else if (funcionario.getSenha_usuario().isEmpty()) {
-                return false;
-            }
+            valiacaoC_F(funcionario);
             funcionarioRepository.inserirFuncionario(funcionario);
-            return true;
         }catch (Exception e){
             throw new RuntimeException(e);
         }
     }
-
     public List<Funcionario> existeFuncionario(int id, String email_f, String s_f) throws SQLException{
         try {
-            List<Funcionario> temS_N= funcionarioRepository.RelatorioFuncionario(id, email_f, s_f);
-            if (temS_N.isEmpty()){
-                System.out.println("Não existe um funcionario com esse id.");
-                return List.of();
-            }else {
-                System.out.println("Funcionario encontrado");
-                return temS_N;
-            }
+            valiacaoR_F(id,email_f,s_f);
+            funcionarioRepository.RelatorioFuncionario(id,email_f,s_f);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-
+        return List.of();
     }
-
-    public boolean RemoverId(int id, String email, String senha) throws SQLException{
+    public void RemoverId(int id, String email, String senha) throws SQLException{
         try {
-            if (id<0){
-                throw new IllegalAccessError("O id invalido");
-            }else {
-                boolean existe=funcionarioRepository.RemoverFuncionario(id, email, senha);
-                if(!existe){
-                    System.out.println("Não existe, esse id para excluir.");
-                }
-                return existe;
-            }
+            valiacaoRemova(id,email,senha);
+            funcionarioRepository.RemoverFuncionario(id,email,senha);
         } catch (Exception e){
             throw new RuntimeException(e);
         }
-
     }
 
-    public boolean atualizarInformacaoF(int id, String nome_funcionario,String tipo_funcionario,String email, String senha){
+    public void atualizarInformacaoF(int id, String nome_funcionario,String tipo_funcionario,String email, String senha){
         try {
-            if (id<0){
-                return false;
-            }
-            if (nome_funcionario.isEmpty() || tipo_funcionario.isEmpty() || email.isEmpty() || senha.isEmpty()){
-                return false;
-            }
-            return funcionarioRepository.updanteFuncionario(id,nome_funcionario,tipo_funcionario,email,senha);
+            valiacaoAutualiza(id, nome_funcionario, tipo_funcionario, email, senha);
+            funcionarioRepository.updanteFuncionario(id, nome_funcionario, tipo_funcionario, email, senha);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
     }
+
+    public void valiacaoRemova(int id, String email, String senha){
+        try{
+            if (id<0){
+                throw new IllegalArgumentException("ID invalido");
+            }
+            boolean e= funcionarioRepository.RemoverFuncionario(id,email,senha);
+            if (!e){
+                throw new RuntimeException("Não encontrado");
+            }
+            if (email==null || email.isEmpty()){
+                throw new IllegalArgumentException("Email incorreto");
+            }
+            if (senha==null || senha.isEmpty()){
+                throw new IllegalArgumentException("senha incorreta");
+            }
+        } catch (Exception e){
+            throw new RuntimeException();
+        }
+    }
+
+    public void valiacaoC_F(FuncionarioDTO f){
+        if (f.getNome_funcionario()==null || f.getNome_funcionario().isEmpty()){
+            throw new IllegalArgumentException("Nome incorreto");
+        }
+        if (f.getTipo_funcionario()==null || f.getTipo_funcionario().isEmpty()){
+            throw new IllegalArgumentException("Função do funcionario incorreto");
+        }
+        if (f.getEmail_funcionario()==null || f.getEmail_funcionario().isEmpty()){
+            throw new IllegalArgumentException("Email do funcionario incorreta");
+        }
+        if (f.getSenha_funcionario()==null || f.getSenha_funcionario().isEmpty()){
+            throw new IllegalArgumentException("senha incorreta");
+        }
+    }
+
+    public List<Funcionario> valiacaoR_F(int id, String email_f, String s_f ){
+        List<Funcionario> tem_S_N = funcionarioRepository.RelatorioFuncionario(id, email_f,  s_f );
+        if (tem_S_N.isEmpty()){
+            throw new IllegalAccessError("Não existe nenhum lista com o id presente.");
+        }
+        if (id<0){
+            throw  new IllegalAccessError("Id invalido");
+        }
+        if (email_f.isEmpty()){
+            throw  new IllegalArgumentException("Email invalido");
+        }
+        if (s_f.isEmpty()){
+            throw new IllegalArgumentException("Senha invalida");
+        }
+        return List.of();
+    }
+    public void valiacaoAutualiza(int id, String nome_funcionario,String tipo_funcionario,String email, String senha){
+        try {
+            if (id<0){
+                throw new IllegalArgumentException("O id está incorreto");
+            }
+            if (nome_funcionario==null || nome_funcionario.isEmpty()){
+                throw new IllegalArgumentException("O nome do funcionario incorreto.");
+            }
+            if (tipo_funcionario==null || tipo_funcionario.isEmpty()){
+                throw new IllegalArgumentException("Tipo de funcionario incorreto");
+            }
+            if (email==null || email.isEmpty()){
+                throw new IllegalArgumentException("Email incorreto");
+            }
+            if (senha==null || senha.isEmpty()){
+                throw new IllegalArgumentException("Senha incorreta");
+            }
+        } catch (IllegalArgumentException e){
+            throw new RuntimeException("Erro apresentado: ", e);
+        }
+    }
+
 }

@@ -16,75 +16,121 @@ public class UsuarioService {
     @Inject
     UsuarioRepository usuarioRepository;
 
-    public boolean cadastraUsuario(UsuarioDTO usuario) throws SQLException{
+    public void cadastraUsuario(UsuarioDTO usuario) throws SQLException{
         try {
-            if (usuario.getNome_usuario().isEmpty()){
-                return false;
-            } else if (usuario.getCpf().isEmpty()) {
-                return false;
-            } else if (usuario.getTelefone().isEmpty()) {
-                return false;
-            } else if (usuario.getEmail_usuario().isEmpty()) {
-                return false;
-            }else  if (usuario.getSenha_usuario().isEmpty()){
-                return false;
-            }
+            valicaoI(usuario);
             usuarioRepository.inserirPaciente(usuario);
-            return true;
 
         } catch (Exception e){
             throw  new RuntimeException(e);
         }
 
     }
+    public void valicaoI(UsuarioDTO usuario){
+        if (usuario.getNome_usuario()==null || usuario.getNome_usuario().isEmpty()){
+            throw new IllegalArgumentException("Nome incorreto");
+        }
+        if (usuario.getCpf()== null || usuario.getCpf().isEmpty()) {
+            throw new IllegalArgumentException("Cpf incorreto");
+        }
+        if (usuario.getTelefone()==null || usuario.getTelefone().isEmpty()){
+            throw new IllegalArgumentException("Telefone incorreto");
+        }
+        if (usuario.getEmail_usuario()==null || usuario.getEmail_usuario().isEmpty()){
+            throw new IllegalArgumentException("Email incorreto");
+        }
+        if (usuario.getSenha_usuario()==null || usuario.getSenha_usuario().isEmpty()){
+            throw new IllegalArgumentException("Senha incorreto");
+        }
+    }
+
     public List<Usuario> existeUsuario(int id_usuario, String email, String senha) throws SQLException{
         try {
-            List<Usuario> temS_N= usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
-            if (temS_N.isEmpty()){
-                System.out.println("Não existe paciente que possui o ID: "+id_usuario);
-                return List.of();
-            }else {
-                System.out.println("Paciente encontrado com sucesso!");
-            }
-            return temS_N;
+            validaRelatorio(id_usuario,email,senha);
+             return usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
 
         }catch (Exception e){
             throw  new RuntimeException(e);
         }
+    }
+    public List<Usuario> validaRelatorio(int id_usuario, String email, String senha){
+        if (email==null || email.isEmpty()){
+            throw new IllegalArgumentException("E-mail incorreto");
+        }
+        if (senha==null || senha.isEmpty()){
+            throw new IllegalArgumentException("senha incorreta.");
+        }
 
+        List<Usuario> temS_N= usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
+        if (temS_N.isEmpty()){
+            System.out.println("Não existe paciente que possui o ID: "+id_usuario);
+            return List.of();
+        }else {
+            System.out.println("Paciente encontrado com sucesso!");
+        }
+        return temS_N;
     }
 
-    public boolean RemoverIdUsuario(int id, String email, String senha) throws  SQLException{
+    public void RemoverIdUsuario(int id, String email, String senha) throws  SQLException{
         try {
-            if(id<0){
-                throw new IllegalAccessError("O id não pode ter valor menor do que 0");
-            }else {
-                boolean existe=usuarioRepository.RemoverPaciente(id,email,senha);
-                if (!existe){
-                    System.out.println("Não existe o id prsente");
-                }
-                return existe;
-            }
-
+            validacaoR(id,email,senha);
+            usuarioRepository.RemoverPaciente(id,email,senha);
         } catch (Exception e){
             throw  new RuntimeException(e);
         }
-
+    }
+    public void validacaoR(int id, String email, String senha){
+        try {
+            if(id<0){
+                throw new IllegalAccessError("O id não pode ter valor menor do que 0");
+            }
+            if (email==null || email.isEmpty()){
+                throw new IllegalArgumentException("Email incorreto");
+            }
+            if (senha==null || senha.isEmpty()){
+                throw new IllegalArgumentException("Senha incorreta.");
+            }
+            boolean existe=usuarioRepository.RemoverPaciente(id,email,senha);
+            if (!existe){
+                System.out.println("Não existe o id prsente");
+            }
+        } catch (Exception e){
+            throw  new RuntimeException(e);
+        }
     }
 
-    public boolean atualizaInformacaoU(int id, String nome,String cpf, String telefone, String email, String senha) throws SQLException{
+    public void atualizaInformacaoU(int id, String nome,String cpf, String telefone, String email, String senha) throws SQLException{
         try {
-            if (id<0){
-                return false;
-            }
-            if (nome.isEmpty() || telefone.isEmpty() || email.isEmpty()){
-                return false;
-            }
-            return usuarioRepository.updanteUsuario(id,nome,cpf,telefone,email, senha);
+            valiacaoA_In_U(id,nome,cpf,telefone,email,senha);
+            usuarioRepository.updanteUsuario(id,nome,cpf,telefone,email, senha);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    public void valiacaoA_In_U(int id, String nome,String cpf, String telefone, String email, String senha){
+        try{
+            if (id<0){
+                throw new IllegalArgumentException("Id não pode ser menor doque zero.");
+            }
+            if (nome.isEmpty()){
+                throw new IllegalArgumentException("Nome está incorreto");
+            }
+            if (cpf.isEmpty()){
+                throw new IllegalArgumentException("cpf está incorreto");
+            }
+            if (telefone.isEmpty()){
+                throw new IllegalArgumentException("Telefone está incorreto");
+            }
+            if (email.isEmpty()){
+                throw new IllegalArgumentException("Email incorreto");
+            }
+            if (senha.isEmpty()){
+                throw new IllegalArgumentException("Senha está incorreta");
+            }
 
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Erro apresetado: ",e);
+        }
     }
 
 }
