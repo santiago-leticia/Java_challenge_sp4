@@ -3,7 +3,6 @@ package org.acme.service;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.acme.model.DTO.UsuarioDTO;
-import org.acme.model.Funcionario;
 import org.acme.model.Usuario;
 import org.acme.repository.UsuarioRepository;
 
@@ -12,19 +11,12 @@ import java.util.List;
 
 @ApplicationScoped
 public class UsuarioService {
-
     @Inject
     UsuarioRepository usuarioRepository;
 
     public void cadastraUsuario(UsuarioDTO usuario) throws SQLException{
-        try {
             valicaoI(usuario);
             usuarioRepository.inserirPaciente(usuario);
-
-        } catch (Exception e){
-            throw  new RuntimeException(e);
-        }
-
     }
     public void valicaoI(UsuarioDTO usuario){
         if (usuario.getNome_usuario()==null || usuario.getNome_usuario().isEmpty()){
@@ -46,41 +38,36 @@ public class UsuarioService {
 
     public List<Usuario> existeUsuario(int id_usuario, String email, String senha) throws SQLException{
         try {
-            validaRelatorio(id_usuario,email,senha);
-             return usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
-
+            valiazaoRelatorio(id_usuario,email,senha);
+            return usuarioRepository.RelatorioPaciente(id_usuario,email,senha);
         }catch (Exception e){
             throw  new RuntimeException(e);
         }
     }
-    public List<Usuario> validaRelatorio(int id_usuario, String email, String senha){
-        if (email==null || email.isEmpty()){
-            throw new IllegalArgumentException("E-mail incorreto");
+    public void valiazaoRelatorio(int id_usuario, String email, String senha){
+        List<Usuario>l=usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
+        if (l.isEmpty()){
+            throw new IllegalArgumentException("Usuario não encontrado");
         }
-        if (senha==null || senha.isEmpty()){
-            throw new IllegalArgumentException("senha incorreta.");
+        if (id_usuario<0){
+            throw new IllegalAccessError("Id invalido");
         }
-
-        List<Usuario> temS_N= usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
-        if (temS_N.isEmpty()){
-            System.out.println("Não existe paciente que possui o ID: "+id_usuario);
-            return List.of();
-        }else {
-            System.out.println("Paciente encontrado com sucesso!");
+        if (email.isEmpty()){
+            throw new IllegalArgumentException("Email invalido");
         }
-        return temS_N;
+        if (senha.isEmpty()){
+            throw new IllegalArgumentException("Senha invalida");
+        }
     }
 
     public void RemoverIdUsuario(int id, String email, String senha) throws  SQLException{
-        try {
-            validacaoR(id,email,senha);
-            usuarioRepository.RemoverPaciente(id,email,senha);
-        } catch (Exception e){
-            throw  new RuntimeException(e);
-        }
+        validacaoR(id,email,senha);
+        usuarioRepository.RemoverPaciente(id,email,senha);
     }
     public void validacaoR(int id, String email, String senha){
         try {
+            if (!usuarioExiste(id, email, senha)){
+                throw new IllegalArgumentException("Existe");}
             if(id<0){
                 throw new IllegalAccessError("O id não pode ter valor menor do que 0");
             }
@@ -90,41 +77,45 @@ public class UsuarioService {
             if (senha==null || senha.isEmpty()){
                 throw new IllegalArgumentException("Senha incorreta.");
             }
-            boolean existe=usuarioRepository.RemoverPaciente(id,email,senha);
-            if (!existe){
-                System.out.println("Não existe o id prsente");
-            }
         } catch (Exception e){
             throw  new RuntimeException(e);
         }
     }
+    public boolean usuarioExiste(int id,String email, String senha) throws SQLException{
+        List<Usuario> c= usuarioRepository.RelatorioPaciente(id,email,senha);
+        return  !c.isEmpty();
+    }
 
     public void atualizaInformacaoU(int id, String nome,String cpf, String telefone, String email, String senha) throws SQLException{
-        try {
-            valiacaoA_In_U(id,nome,cpf,telefone,email,senha);
-            usuarioRepository.updanteUsuario(id,nome,cpf,telefone,email, senha);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        valiacaoA_In_U(id,nome,cpf,telefone,email,senha);
+        usuarioRepository.updanteUsuario(
+                    id,
+                    nome,
+                    cpf,
+                    telefone,
+                    email,
+                    senha
+            );
     }
     public void valiacaoA_In_U(int id, String nome,String cpf, String telefone, String email, String senha){
         try{
+
             if (id<0){
                 throw new IllegalArgumentException("Id não pode ser menor doque zero.");
             }
-            if (nome.isEmpty()){
+            if (nome==null || nome.isEmpty()){
                 throw new IllegalArgumentException("Nome está incorreto");
             }
-            if (cpf.isEmpty()){
+            if (cpf==null || cpf.isEmpty()){
                 throw new IllegalArgumentException("cpf está incorreto");
             }
-            if (telefone.isEmpty()){
+            if (telefone==null || telefone.isEmpty()){
                 throw new IllegalArgumentException("Telefone está incorreto");
             }
-            if (email.isEmpty()){
+            if (email==null || email.isEmpty()){
                 throw new IllegalArgumentException("Email incorreto");
             }
-            if (senha.isEmpty()){
+            if (senha==null || senha.isEmpty()){
                 throw new IllegalArgumentException("Senha está incorreta");
             }
 
@@ -132,6 +123,7 @@ public class UsuarioService {
             throw new RuntimeException("Erro apresetado: ",e);
         }
     }
+
 
 }
 

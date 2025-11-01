@@ -1,6 +1,6 @@
 package org.acme.model.DTO;
 //so vai usar alguns
-public class ConsultaDTO extends FuncionarioDTO {
+public class ConsultaDTO extends FuncionarioDTO  {
     private int id_paciente;
     private int id_funcionario;
     private String data_consulta;

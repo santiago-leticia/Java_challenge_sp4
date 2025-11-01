@@ -1,6 +1,6 @@
 package org.acme.model.DTO;
 
-public class UsuarioDTO {
+public class UsuarioDTO  {
     private String nome_usuario;
     private String cpf;
     private String telefone;
@@ -8,6 +8,14 @@ public class UsuarioDTO {
     private String senha_usuario;
 
     public UsuarioDTO() {}
+
+    public UsuarioDTO(String nome_usuario, String cpf, String telefone, String email_usuario, String senha_usuario) {
+        this.nome_usuario = nome_usuario;
+        this.cpf = cpf;
+        this.telefone = telefone;
+        this.email_usuario = email_usuario;
+        this.senha_usuario = senha_usuario;
+    }
 
     public String getNome_usuario() {
         return nome_usuario;

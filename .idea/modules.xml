@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/challenge-s4.iml" filepath="$PROJECT_DIR$/.idea/challenge-s4.iml" />
-      <module fileurl="file://$PROJECT_DIR$/code-with-quarkus/code-with-quarkus.iml" filepath="$PROJECT_DIR$/code-with-quarkus/code-with-quarkus.iml" />
     </modules>
   </component>
 </project>
