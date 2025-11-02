@@ -43,17 +43,16 @@ public class FuncionarioRepository {
         }
     }
 
-    public List<Funcionario> RelatorioFuncionario(int id,  String email_f, String s_f) {
-        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE id_funcionario=? AND ds_email_funcionario=? AND ds_senha_funcionario=?";
+    public List<Funcionario> RelatorioFuncionario(String email_f, String s_f) {
+        String sql = "select * from T_RHSTU_FUNCIONARIO WHERE ds_email_funcionario=? AND ds_senha_funcionario=?";
 
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
-            ps.setInt(1,id);
             ps.setString(2,email_f);
             ps.setString(3,s_f);
             List<Funcionario> l = new ArrayList<>();
-            try(ResultSet rs = ps.executeQuery();) {
+            try(ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Funcionario funcionario = new Funcionario();
                     funcionario.setId_funcionario(rs.getInt(1));

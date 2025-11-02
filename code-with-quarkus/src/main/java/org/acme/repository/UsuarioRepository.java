@@ -32,10 +32,10 @@ public class UsuarioRepository {
     @Inject
     DataSource dataSource;
 
-    public void inserirPaciente(UsuarioDTO usuario) throws SQLException {
+    public void inserirPaciente(UsuarioDTO usuario){
         String sqlI = "INSERT INTO T_RHSTU_PACIENTE (nm_paciente, nr_cpf, nr_telefone_paciente, ds_email_paciente, ds_senha_paciente) VALUES (?,?,?,?,?)";
             try (Connection con = dataSource.getConnection();
-                 PreparedStatement ps = con.prepareStatement(sqlI);
+                 PreparedStatement ps = con.prepareStatement(sqlI)
             ) {
                 ps.setString(1, usuario.getNome_usuario());
                 ps.setString(2, usuario.getCpf());
@@ -43,22 +43,22 @@ public class UsuarioRepository {
                 ps.setString(4, usuario.getEmail_usuario());
                 ps.setString(5, usuario.getSenha_usuario());
                 ps.executeUpdate();
-
+            } catch (SQLException e){
+                throw new RuntimeException("Erro de executar o cadastro.");
             }
         }
 
-        public List<Usuario> RelatorioPaciente(int id_paciente, String email_u, String senha_u) {
-            String sql = "select * from T_RHSTU_PACIENTE WHERE id_paciente=? AND ds_email_paciente=? AND ds_senha_paciente=?";
+        public List<Usuario> RelatorioPaciente( String email_u, String senha_u) {
+            String sql = "select * from T_RHSTU_PACIENTE WHERE ds_email_paciente=? AND ds_senha_paciente=?";
 
             try (Connection con = dataSource.getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)) {
 
-                ps.setInt(1,id_paciente);
-                ps.setString(2,email_u);
-                ps.setString(3,senha_u);
+                ps.setString(1,email_u);
+                ps.setString(2,senha_u);
 
                 List<Usuario> l = new ArrayList<>();
-                try(ResultSet rs = ps.executeQuery();) {
+                try(ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         Usuario usuario = new Usuario();
                         usuario.setId_usuario(rs.getInt(1));

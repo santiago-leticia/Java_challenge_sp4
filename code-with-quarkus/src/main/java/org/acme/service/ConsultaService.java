@@ -13,7 +13,6 @@ import org.acme.repository.UsuarioRepository;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 
 @ApplicationScoped
 public class ConsultaService {
@@ -67,24 +66,22 @@ public class ConsultaService {
         return u.contains(id);
     }
 
-    public Set<Consulta> existeConsulta(int id, String email_u, String senha_u) throws SQLException{
+
+
+    public List<Consulta> existeConsulta( String email_u, String senha_u) throws SQLException{
         try {
-            valiacaoRelatorioConsulta(id, email_u, senha_u);
-            consultaRepository.RelatorioConsulta(id, email_u, senha_u);
+            valiacaoRelatorioConsulta( email_u, senha_u);
+             return consultaRepository.RelatorioConsulta(email_u, senha_u);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-        return Set.of();
     }
 
-    public void valiacaoRelatorioConsulta(int id, String email_u, String senha_u){
+    public void valiacaoRelatorioConsulta( String email_u, String senha_u){
         try {
-            Set<Consulta>c = consultaRepository.RelatorioConsulta(id, email_u, senha_u);
+            List<Consulta>c = consultaRepository.RelatorioConsulta(email_u, senha_u);
             if (c.isEmpty()){
                 throw new IllegalArgumentException("Consulta não encontrada");
-            }
-            if (id<0){
-                throw new IllegalArgumentException("ID invalido");
             }
             if (email_u==null || email_u.isEmpty()){
                 throw new IllegalArgumentException("Email invalido");
@@ -102,14 +99,11 @@ public class ConsultaService {
     public void RemoverIdConsulta(int id, String email_consulta, String senha_consulta) throws SQLException{
         valiacaoRemover(id, email_consulta, senha_consulta);
         consultaRepository.RemoverConsulta(id, email_consulta, senha_consulta);
-
     }
 
     public void valiacaoRemover(int id, String email_consulta, String senha_consulta){
         try{
-            if (!cosultaExiste(id, email_consulta, senha_consulta)){
-                throw new IllegalArgumentException("Não Existe");
-            }
+
             if (id<0){
                 throw  new IllegalAccessError("Id está incorreta");
             }
@@ -123,10 +117,7 @@ public class ConsultaService {
             throw new RuntimeException(e);
         }
     }
-    public boolean cosultaExiste(int id, String email, String senha) throws SQLException {
-        Set<Consulta> c= consultaRepository.RelatorioConsulta(id,email,senha);
-        return c.isEmpty();
-    }
+
 
     public void atualizarInformacaoC(int id_c,int id_u, int id_f, String d_c, String h_c, String i_c) throws SQLException{
             valiacaoAtualizarC(id_c,id_u,id_f, d_c, h_c, i_c);

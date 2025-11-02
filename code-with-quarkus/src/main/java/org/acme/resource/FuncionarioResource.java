@@ -41,7 +41,8 @@ public class FuncionarioResource {
     public Response RemoverFuncionario (Funcionario funcionario){
         try {
             funcionarioService.RemoverId(funcionario.getId_funcionario(), funcionario.getEmail_funcionario(),funcionario.getSenha_funcionario());
-            return Response.status(Response.Status.OK).entity("Removido com sucesso").build();
+            return Response.status(Response.Status.OK)
+                    .entity("Removido com sucesso").build();
         }catch (SQLException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro no server.").build();
@@ -56,7 +57,6 @@ public class FuncionarioResource {
     public Response Relatorio_funcionario(Funcionario f){
         try {
             List<Funcionario>l= funcionarioService.existeFuncionario(
-                            f.getId_funcionario(),
                             f.getEmail_funcionario(),
                             f.getSenha_funcionario());
 

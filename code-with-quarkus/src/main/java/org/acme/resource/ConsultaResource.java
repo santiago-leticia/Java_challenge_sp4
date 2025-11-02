@@ -10,9 +10,8 @@ import org.acme.model.DTO.ConsultaDTO;
 import org.acme.service.ConsultaService;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
+
 
 @Path("/doctorAjuda")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,22 +32,20 @@ public class ConsultaResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao adicionar Consulta: " +e.getMessage())
                     .build();
-        }
-        catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e){
             return Response.status(422).entity(e.getMessage()).build();
         }
     }
     @GET
     @Path("/relatorio/consulta")
-    public Response Relatorio_Consulta(
-            @QueryParam("id_consulta") int id_c,
-            @QueryParam("email_u") String email,
-            @QueryParam("senha_u") String senha
+    public Response Relatorio_Consulta(Consulta c
     ){
 
         try{
-            Set<Consulta> l= consultaService.existeConsulta(
-                    id_c, email, senha);
+            List<Consulta> l= consultaService.existeConsulta(
+                    c.getEmail_usuario(),
+                    c.getSenha_usuario()
+            );
             return Response.status(Response.Status.OK)
                     .entity(l).build();
         }catch (SQLException e){
@@ -59,25 +56,19 @@ public class ConsultaResource {
 
     @DELETE
     @Path("/deletar/consulta")
-    public Response RemoverConsulta (
-            @QueryParam("id_consulta") int id_c,
-            @QueryParam("email_u") String email,
-            @QueryParam("senha_u") String senha){
+    public Response RemoverConsulta (Consulta c){
         try {
             consultaService.RemoverIdConsulta(
-                    id_c, email, senha);
-
+                    c.getId_consulta(), c.getEmail_usuario(), c.getSenha_usuario());
             return Response
                     .status(Response.Status.OK)
                     .entity("Removido com sucesso")
                     .build();
         }catch (SQLException e){
-            Map<String, String> erro= new HashMap<>();
             return Response
                     .status(Response.Status.UNAUTHORIZED)
-                    .entity(erro)
+                    .entity("Erro no server.")
                     .build();
-
         } catch (IllegalArgumentException e) {
             return Response
                     .status(200)

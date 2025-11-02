@@ -50,11 +50,4 @@ public class Funcionario {
         this.senha_funcionario = senha_funcionario;
     }
 
-    public void lerFuncionario(int id, String nm, String tf, String email, String senha ){
-        System.out.println("ID do Funcionario: " + id);
-        System.out.println("Nome do Funcionario: " + nm);
-        System.out.println("Função: "+ tf);
-        System.out.println("Email do funcionario: " +email);
-        System.out.println("Senha: " + senha);
-    }
 }

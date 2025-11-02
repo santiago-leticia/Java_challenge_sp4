@@ -34,10 +34,10 @@ public class FuncionarioService{
         }
     }
 
-    public List<Funcionario> existeFuncionario(int id, String email_f, String s_f) throws SQLException{
+    public List<Funcionario> existeFuncionario(String email_f, String s_f) throws SQLException{
         try {
-            valiacaoR_F(id,email_f,s_f);
-            return funcionarioRepository.RelatorioFuncionario(id,email_f,s_f);
+            valiacaoR_F(email_f,s_f);
+            return funcionarioRepository.RelatorioFuncionario(email_f,s_f);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -78,13 +78,10 @@ public class FuncionarioService{
 
 
 
-    public void valiacaoR_F(int id, String email_f, String s_f ){
-        List<Funcionario>l= funcionarioRepository.RelatorioFuncionario(id, email_f, s_f);
+    public void valiacaoR_F(String email_f, String s_f ){
+        List<Funcionario>l= funcionarioRepository.RelatorioFuncionario(email_f, s_f);
         if (l.isEmpty()){
             throw new IllegalArgumentException("Funcionando não encontrado");
-        }
-        if (id<0){
-            throw  new IllegalAccessError("Id invalido");
         }
         if (email_f.isEmpty()){
             throw  new IllegalArgumentException("Email invalido");

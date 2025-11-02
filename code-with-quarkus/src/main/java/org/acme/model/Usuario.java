@@ -11,14 +11,6 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(int id_usuario, String nome_usuario, String cpf, String telefone, String email_usuario, String senha_usuario) {
-        this.id_usuario = id_usuario;
-        this.nome_usuario = nome_usuario;
-        this.cpf = cpf;
-        this.telefone = telefone;
-        this.email_usuario = email_usuario;
-        this.senha_usuario = senha_usuario;
-    }
 
     public int getId_usuario() {
         return id_usuario;
@@ -68,12 +60,5 @@ public class Usuario {
         this.senha_usuario = senha_usuario;
     }
 
-    public void ler(int id, String nm_paciente, String cpf, String tl, String email, String senha){
-        System.out.println("ID do paciente: " + id);
-        System.out.println("Nome do paciente: " + nm_paciente);
-        System.out.println("CPF: " + cpf);
-        System.out.println("Telefone: " + tl);
-        System.out.println("Email: " + email);
-        System.out.println("Senha: "+senha);
-    }
+
 }

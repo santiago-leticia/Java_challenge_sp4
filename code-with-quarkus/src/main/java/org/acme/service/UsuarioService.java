@@ -36,21 +36,18 @@ public class UsuarioService {
         }
     }
 
-    public List<Usuario> existeUsuario(int id_usuario, String email, String senha) throws SQLException{
+    public List<Usuario> existeUsuario( String email, String senha) throws SQLException{
         try {
-            valiazaoRelatorio(id_usuario,email,senha);
-            return usuarioRepository.RelatorioPaciente(id_usuario,email,senha);
+            valiazaoRelatorio(email,senha);
+            return usuarioRepository.RelatorioPaciente(email,senha);
         }catch (Exception e){
             throw  new RuntimeException(e);
         }
     }
-    public void valiazaoRelatorio(int id_usuario, String email, String senha){
-        List<Usuario>l=usuarioRepository.RelatorioPaciente(id_usuario, email, senha);
+    public void valiazaoRelatorio(String email, String senha){
+        List<Usuario>l=usuarioRepository.RelatorioPaciente( email, senha);
         if (l.isEmpty()){
             throw new IllegalArgumentException("Usuario não encontrado");
-        }
-        if (id_usuario<0){
-            throw new IllegalAccessError("Id invalido");
         }
         if (email.isEmpty()){
             throw new IllegalArgumentException("Email invalido");
@@ -66,7 +63,7 @@ public class UsuarioService {
     }
     public void validacaoR(int id, String email, String senha){
         try {
-            if (!usuarioExiste(id, email, senha)){
+            if (!usuarioExiste(email, senha)){
                 throw new IllegalArgumentException("Existe");}
             if(id<0){
                 throw new IllegalAccessError("O id não pode ter valor menor do que 0");
@@ -81,8 +78,8 @@ public class UsuarioService {
             throw  new RuntimeException(e);
         }
     }
-    public boolean usuarioExiste(int id,String email, String senha) throws SQLException{
-        List<Usuario> c= usuarioRepository.RelatorioPaciente(id,email,senha);
+    public boolean usuarioExiste(String email, String senha){
+        List<Usuario> c= usuarioRepository.RelatorioPaciente(email,senha);
         return  !c.isEmpty();
     }
 

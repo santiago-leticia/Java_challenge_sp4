@@ -27,6 +27,7 @@ public class UsuarioResource {
             usuarioService.cadastraUsuario(usuario);
             return Response.status(Response.Status.CREATED)
                     .entity("Criando com sucesso").build();
+
         }catch (SQLException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao adicionar paciente: " +e.getMessage())
@@ -41,13 +42,14 @@ public class UsuarioResource {
         try {
 
             List<Usuario> l= usuarioService.existeUsuario(
-                            usuario.getId_usuario(),
                             usuario.getEmail_usuario(),
                             usuario.getSenha_usuario());
             return Response.status(Response.Status.OK).entity(l).build();
-        } catch (Exception e){
+        } catch (SQLException e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao conectar").build();
+        } catch (IllegalArgumentException e){
+            return Response.status(422).entity(e.getMessage()).build();
         }
     }
 

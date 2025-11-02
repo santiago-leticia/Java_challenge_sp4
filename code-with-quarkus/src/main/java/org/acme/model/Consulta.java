@@ -59,11 +59,4 @@ public class Consulta extends Usuario {
         this.informacao_consulta = informacao_consulta;
     }
 
-    public void lerConsulta(int id, String nm_paciente, String email, String nm_funcionario, String dt_consulta){
-        System.out.println("ID do Consulta: " + id);
-        System.out.println("Nome do Paciente: " + nm_paciente);
-        System.out.println("Email do paciente: "+ email);
-        System.out.println("Nome do Funcionario: "+nm_funcionario);
-        System.out.println("Data da consulta: " +dt_consulta);;
-    }
 }

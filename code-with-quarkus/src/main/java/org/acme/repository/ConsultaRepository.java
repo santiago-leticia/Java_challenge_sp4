@@ -10,8 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class ConsultaRepository  {
@@ -21,12 +21,13 @@ public class ConsultaRepository  {
     id_paciente  NUMBER,
     id_funcionario NUMBER,
     dt_consulta DATE,
-    hr_consulta VARCHAR(7 0),
+    hr_consulta VARCHAR(5),
     ds_informacoes VARCHAR(100),
-    CONSTRAINT FK_T_RHSTU_CONSULTA FOREIGN KEY(id_funcionario) REFERENCES T_RHSTU_FUNCIONARIO (id_funcionario)
+    CONSTRAINT FK_T_RHSTU_CONSULTA FOREIGN KEY(id_funcionario) REFERENCES T_RHSTU_FUNCIONARIO (id_funcionario),
     CONSTRAINT T_RHSTU_CONSULTA_FK FOREIGN KEY(id_paciente) REFERENCES T_RHSTU_PACIENTE (id_paciente)
 
 );
+
   */
 
     @Inject
@@ -36,38 +37,44 @@ public class ConsultaRepository  {
     public void inserirConsulta(ConsultaDTO consulta) throws SQLException {
         String sqlI = "INSERT  INTO T_RHSTU_CONSULTA (id_paciente, id_funcionario, dt_consulta, hr_consulta, ds_informacoes) VALUES (?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?)";
         try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(sqlI);
+             PreparedStatement ps = con.prepareStatement(sqlI)
         ) {
             ps.setInt(1, consulta.getId_paciente());
             ps.setInt(2, consulta.getId_funcionario());
-            ps.setString(3, consulta.getData_consulta());
+            ps.setString(3,consulta.getData_consulta());
             ps.setString(4,consulta.getHoras_consultas());
             ps.setString(5, consulta.getInformacao_consulta());
 
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new SQLException();
+            throw new SQLException(e);
         }
     }
 
 
-    public Set<Consulta> RelatorioConsulta(int id_c, String email, String senha) throws SQLException {
+    public List<Consulta> RelatorioConsulta(String email, String senha) throws SQLException {
         String sql = "SELECT " +
                 "c.id_consulta, " +
                 "c.dt_consulta, " +
                 "c.hr_consulta, " +
                 "c.ds_informacoes, " +
+                "p.id_paciente, " +
+                "p.nm_paciente, " +
+                "p.nr_cpf, " +
+                "p.nr_telefone_paciente, " +
+                "p.ds_email_paciente, " +
+                "p.ds_senha_paciente, " +
+                "f.id_funcionario, " +
                 "f.nm_funcionario " +
                 "FROM " +
                 "   T_RHSTU_CONSULTA c, " +
                 "   T_RHSTU_PACIENTE p, " +
                 "   T_RHSTU_FUNCIONARIO f " +
                 "WHERE c.id_paciente = p.id_paciente AND c.id_funcionario = f.id_funcionario AND c.id_consulta=? AND p.ds_email_paciente=? AND p.ds_senha_paciente=? ";
-        Set<Consulta> l = new HashSet<>();
+        List<Consulta> l = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)
         ) {
-            ps.setInt(1,id_c);
             ps.setString(2, email);
             ps.setString(3, senha);
 
@@ -75,31 +82,31 @@ public class ConsultaRepository  {
 
                 while (rs.next()) {
                     Consulta consulta = new Consulta();
-                    System.out.println();
                     consulta.setId_consulta(rs.getInt(1));
                     consulta.setData_consulta(rs.getString(2));
                     consulta.setHoras_consulta(rs.getString(3));
                     consulta.setInformacao_consulta(rs.getString(4));
-                    consulta.setNome_funcionario(rs.getString(5));
+                    System.out.println("Informação do Usuario");
+                    consulta.setNome_usuario(rs.getString(5));
+                    consulta.setCpf(rs.getString(6));
+                    consulta.setTelefone(rs.getString(7));
+                    consulta.setEmail_usuario(rs.getString(8));
+                    consulta.setSenha_usuario(rs.getString(9));
+                    System.out.println("Informação do Funcionario");
+                    consulta.setId_funcionario(rs.getInt(10));
+                    consulta.setNome_funcionario(rs.getString(11));
 
                     l.add(consulta);
-
-                    consulta.lerConsulta(rs.getInt(1),
-                            rs.getString(2),
-                            rs.getString(3),
-                            rs.getString(4),
-                            rs.getString(5));
                 }
             }
-        } catch (SQLException e) {
-            throw new SQLException(e);
+            return l;
         }
-        return l;
+
     }
 
 
     public void RemoverConsulta(int id_consulta, String email_paciente, String s_p) throws SQLException {
-        String sql = "DELETE FROM T_RHSTU_consulta WHERE id_consulta=? AND id_paciente IN (select from T_RHSTU_PACIENTE WHERE ds_email_paciente=? AND ds_senha_paciente=?)";
+        String sql = "DELETE FROM T_RHSTU_CONSULTA WHERE id_consulta=? AND id_paciente IN (SELECT id_paciente FROM T_RHSTU_PACIENTE WHERE ds_email_paciente=? AND ds_senha_paciente=?)";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {
@@ -115,11 +122,11 @@ public class ConsultaRepository  {
     }
 
     public void updanteConsulta(int id_c, String d_c, String horas, String i_c) throws SQLException{
-        String sql="UPDATE T_RHSTU_consulta SET" +
-                "dt_consulta= TO_DATE(?, 'YYYY-MM-DD'), " +
-                "hr_cosnsulta=?, " +
-                "ds_informacoes=? " +
-                "WHERE id_consulta=?";
+        String sql="UPDATE T_RHSTU_CONSULTA SET " +
+                "dt_consulta = TO_DATE(?, 'YYYY-MM-DD'), " +
+                "hr_consulta = ?, " +
+                "ds_informacoes = ? " +
+                " WHERE id_consulta = ?";
         try(Connection con= dataSource.getConnection();
             PreparedStatement ps= con.prepareStatement(sql)) {
             ps.setString(1, d_c);
@@ -128,6 +135,10 @@ public class ConsultaRepository  {
             ps.setInt(4, id_c);
 
             ps.executeUpdate();
+            int alteradas=ps.executeUpdate();
+            if (alteradas==0){
+                throw new IllegalArgumentException("Não existe nenhum id dentro da tabela");
+            }
 
         }catch (SQLException e){
             throw new SQLException("Erro de executar updante.");
