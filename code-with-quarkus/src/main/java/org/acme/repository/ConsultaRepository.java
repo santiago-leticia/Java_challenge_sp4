@@ -129,7 +129,7 @@ public class ConsultaRepository  {
             int deletado=ps.executeUpdate();
 
             if (deletado>0){
-                throw new IllegalArgumentException("Foi deletado");
+                throw new SQLException("Foi deletado");
             }
 
         }catch (SQLException e) {
@@ -150,7 +150,7 @@ public class ConsultaRepository  {
             ps.setString(3,i_c);
             ps.setInt(4, id_c);
 
-            ps.executeUpdate();
+
             int alteradas=ps.executeUpdate();
             if (alteradas==0){
                 throw new IllegalArgumentException("Não houver atuliazacao");

@@ -126,7 +126,7 @@ public class FuncionarioRepository {
 
             int deletado=ps.executeUpdate();
             if (deletado>0){
-                throw new IllegalArgumentException("Foi deletado");
+                throw new SQLException("Foi deletado");
             }
 
         }catch (SQLException e) {
@@ -145,7 +145,10 @@ public class FuncionarioRepository {
             ps.setString(4,senha_funcionario);
             ps.setInt(5,id_funcionario);
 
-            ps.executeUpdate();
+            int atualiza=ps.executeUpdate();
+            if (atualiza==0){
+                throw new SQLException("Não atualizou");
+            }
 
         }catch (SQLException e){
             throw new RuntimeException(e);

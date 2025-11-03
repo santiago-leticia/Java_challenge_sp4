@@ -147,7 +147,7 @@ public class UsuarioRepository {
 
                     int deleta=ps.executeUpdate();
                     if (deleta>0){
-                        throw new IllegalArgumentException("Foi deletado");
+                        throw new SQLException("Foi deletado");
                     }
                 }catch (SQLException e) {
                     throw new RuntimeException("Erro de remover");
@@ -168,10 +168,9 @@ public class UsuarioRepository {
                 ps.setString(5,senha);
                 ps.setInt(6, id);
 
-                ps.executeUpdate();
                 int alteradas=ps.executeUpdate();
                 if (alteradas==0){
-                    throw new IllegalArgumentException("Não existe nenhum id dentro da tabela");
+                    throw new SQLException("Não atualizou");
                 }
 
             }catch (SQLException e){
