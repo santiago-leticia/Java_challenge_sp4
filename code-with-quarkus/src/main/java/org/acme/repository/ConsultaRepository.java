@@ -114,7 +114,11 @@ public class ConsultaRepository  {
             ps.setString(2,email_paciente);
             ps.setString(3,s_p);
 
-            ps.executeUpdate();
+            int deletado=ps.executeUpdate();
+
+            if (deletado>0){
+                throw new IllegalArgumentException("Foi deletado");
+            }
 
         }catch (SQLException e) {
             throw new SQLException("Erro de remover");
@@ -137,7 +141,7 @@ public class ConsultaRepository  {
             ps.executeUpdate();
             int alteradas=ps.executeUpdate();
             if (alteradas==0){
-                throw new IllegalArgumentException("Não existe nenhum id dentro da tabela");
+                throw new IllegalArgumentException("Não houver atuliazacao");
             }
 
         }catch (SQLException e){

@@ -61,7 +61,7 @@ public class UsuarioResource {
     @Path("/deletar/paciente")
     public Response RemoverUsuario (Usuario usuario){
         try {
-            usuarioService.RemoverIdUsuario(usuario.getId_usuario(),
+            usuarioService.RemoverUsuario(usuario.getId_usuario(),
                     usuario.getEmail_usuario(),
                     usuario.getSenha_usuario());
             return  Response.status(Response.Status.OK)

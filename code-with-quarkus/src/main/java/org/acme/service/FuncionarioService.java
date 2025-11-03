@@ -16,10 +16,10 @@ public class FuncionarioService{
     FuncionarioRepository funcionarioRepository;
 
     public void cadastraFuncionario(FuncionarioDTO funcionario) throws SQLException{
-        valiacaoC_F(funcionario);
+        valiacaoCadastroFuncionario(funcionario);
         funcionarioRepository.inserirFuncionario(funcionario);
     }
-    public void valiacaoC_F(FuncionarioDTO f){
+    public void valiacaoCadastroFuncionario(FuncionarioDTO f){
         if (funcionarioRepository.existe(f.getEmail_funcionario())){
             throw new IllegalArgumentException("Email do Funcionario ja existe");
         }
@@ -37,10 +37,10 @@ public class FuncionarioService{
         }
     }
 
-    public List<Funcionario> existeFuncionario(String email_f, String s_f) throws SQLException{
+    public List<Funcionario> existeFuncionario(String email, String senha) throws SQLException{
         try {
-            valiacaoR_F(email_f,s_f);
-            return funcionarioRepository.RelatorioFuncionario(email_f,s_f);
+            valiacaoRelato(email,senha);
+            return funcionarioRepository.RelatorioFuncionario(email,senha);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -81,15 +81,15 @@ public class FuncionarioService{
 
 
 
-    public void valiacaoR_F(String email_f, String s_f ){
-        List<Funcionario>l= funcionarioRepository.RelatorioFuncionario(email_f, s_f);
+    public void valiacaoRelato(String email, String senha){
+        List<Funcionario>l= funcionarioRepository.RelatorioFuncionario(email, senha);
         if (l.isEmpty()){
             throw new IllegalArgumentException("Funcionando não encontrado");
         }
-        if (email_f.isEmpty()){
+        if (email.isEmpty()){
             throw  new IllegalArgumentException("Email invalido");
         }
-        if (s_f.isEmpty()){
+        if (senha.isEmpty()){
             throw new IllegalArgumentException("Senha invalida");
         }
     }

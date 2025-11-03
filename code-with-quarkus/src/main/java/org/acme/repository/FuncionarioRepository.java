@@ -116,7 +116,10 @@ public class FuncionarioRepository {
             ps.setString(2,email_f);
             ps.setString(3,s_f);
 
-            ps.executeUpdate();
+            int deletado=ps.executeUpdate();
+            if (deletado>0){
+                throw new IllegalArgumentException("Foi deletado");
+            }
 
         }catch (SQLException e) {
             throw new RuntimeException("Erro de remover");
@@ -124,7 +127,7 @@ public class FuncionarioRepository {
     }
 
     public void updanteFuncionario(int id_funcionario, String nome_funcionario,String tipo_funcionario, String email_funcionario, String senha_funcionario){
-        String sql="UPDATE T_RHSTU_FUNCIONARIO SET nm_funcionario= ?, tp_funcionario= ?, email_funcionario= ?, senha_funcionario= ?, WHERE id_funcionario= ?";
+        String sql="UPDATE T_RHSTU_FUNCIONARIO SET nm_funcionario= ?, tp_funcionario= ?, email_funcionario= ?, senha_funcionario= ? WHERE id_funcionario= ?";
         try(Connection con= dataSource.getConnection();
             PreparedStatement ps= con.prepareStatement(sql)) {
 

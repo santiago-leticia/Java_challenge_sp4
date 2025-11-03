@@ -15,10 +15,10 @@ public class UsuarioService {
     UsuarioRepository usuarioRepository;
 
     public void cadastraUsuario(UsuarioDTO usuario) throws SQLException{
-            valicaoI(usuario);
+            valicaoCadastro(usuario);
             usuarioRepository.inserirPaciente(usuario);
     }
-    public void valicaoI(UsuarioDTO usuario){
+    public void valicaoCadastro(UsuarioDTO usuario){
         if (usuarioRepository.Existe(usuario.getEmail_usuario())){
             throw new IllegalArgumentException("Email ja cadastrado");
         }
@@ -63,11 +63,11 @@ public class UsuarioService {
         }
     }
 
-    public void RemoverIdUsuario(int id, String email, String senha) throws  SQLException{
-        validacaoR(id,email,senha);
+    public void RemoverUsuario(int id, String email, String senha) throws  SQLException{
+        validacaoRemocao(id,email,senha);
         usuarioRepository.RemoverPaciente(id,email,senha);
     }
-    public void validacaoR(int id, String email, String senha){
+    public void validacaoRemocao(int id, String email, String senha){
         try {
             if (!usuarioExiste(email, senha)){
                 throw new IllegalArgumentException("Existe");}
@@ -90,7 +90,7 @@ public class UsuarioService {
     }
 
     public void atualizaInformacaoU(int id, String nome,String cpf, String telefone, String email, String senha) throws SQLException{
-        valiacaoA_In_U(id,nome,cpf,telefone,email,senha);
+        valiacaoAtualizacao(id,nome,cpf,telefone,email,senha);
         usuarioRepository.updanteUsuario(
                     id,
                     nome,
@@ -100,7 +100,7 @@ public class UsuarioService {
                     senha
             );
     }
-    public void valiacaoA_In_U(int id, String nome,String cpf, String telefone, String email, String senha){
+    public void valiacaoAtualizacao(int id, String nome,String cpf, String telefone, String email, String senha){
         try{
 
             if (id<0){

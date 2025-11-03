@@ -143,7 +143,10 @@ public class UsuarioRepository {
                     ps.setString(2,email_u);
                     ps.setString(3,senha_u);
 
-                    ps.executeUpdate();
+                    int deleta=ps.executeUpdate();
+                    if (deleta>0){
+                        throw new IllegalArgumentException("Foi deletado");
+                    }
                 }catch (SQLException e) {
                     throw new RuntimeException("Erro de remover");
                 }
