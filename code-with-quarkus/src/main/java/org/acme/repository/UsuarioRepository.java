@@ -47,19 +47,26 @@ public class UsuarioRepository {
                 throw new RuntimeException("Erro de executar o cadastro.");
             }
         }
-        public boolean Existe(String email_usuario){
+        public boolean existeId(int id){
+            String sql="SELECT COUNT(*) FROM T_RHSTU_PACIENTE WHERE id_paciente=?";
+            try(Connection con=dataSource.getConnection();
+                PreparedStatement ps=con.prepareStatement(sql)) {
+                ps.setInt(1,id);
+                try(ResultSet rs= ps.executeQuery()){
+                    return (rs.next() && rs.getInt(1)>0);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        public boolean existeEmail(String email_usuario){
             String sql="SELECT COUNT(*) FROM T_RHSTU_PACIENTE WHERE email_paciente=?";
             try(Connection con=dataSource.getConnection();
                 PreparedStatement ps=con.prepareStatement(sql)) {
                 ps.setString(1,email_usuario);
                 try(ResultSet rs= ps.executeQuery()){
-
-                    if (rs.next()){
-                        int tem= rs.getInt(1);
-                        return tem>0;
-                    }
+                    return (rs.next() && rs.getInt(1)>0);
                 }
-                return false;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -70,13 +77,8 @@ public class UsuarioRepository {
                 PreparedStatement ps=con.prepareStatement(sql)) {
                 ps.setString(1,cpf);
                 try(ResultSet rs= ps.executeQuery()){
-
-                    if (rs.next()){
-                        int tem= rs.getInt(1);
-                        return tem>0;
-                    }
+                    return (rs.next() && rs.getInt(1)>0);
                 }
-                return false;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

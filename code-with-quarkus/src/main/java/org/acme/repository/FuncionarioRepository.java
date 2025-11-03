@@ -42,18 +42,26 @@ public class FuncionarioRepository {
             throw new SQLException();
         }
     }
-    public boolean existe(String email_Funcionario){
+    public boolean existeId(int id){
+        String sql="SELECT COUNT(*) FROM T_RHSTU_FUNCIONARIO WHERE id_funcionario=?";
+        try(Connection con=dataSource.getConnection();
+            PreparedStatement ps=con.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            try(ResultSet rs= ps.executeQuery()){
+                return (rs.next() && rs.getInt(1)>0);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean existeEmail(String email_Funcionario){
         String sql="SELECT COUNT(*) FROM T_RHSTU_FUNCIONARIO WHERE email_funcionario=?";
         try(Connection con=dataSource.getConnection();
             PreparedStatement ps=con.prepareStatement(sql)) {
             ps.setString(1,email_Funcionario);
             try(ResultSet rs= ps.executeQuery()){
-                if (rs.next()){
-                    int tem= rs.getInt(1);
-                    return tem>0;
-                }
+                return (rs.next() && rs.getInt(1)>0);
             }
-            return false;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

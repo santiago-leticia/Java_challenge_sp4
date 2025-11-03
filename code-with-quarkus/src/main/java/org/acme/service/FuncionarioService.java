@@ -20,7 +20,7 @@ public class FuncionarioService{
         funcionarioRepository.inserirFuncionario(funcionario);
     }
     public void valiacaoCadastroFuncionario(FuncionarioDTO f){
-        if (funcionarioRepository.existe(f.getEmail_funcionario())){
+        if (funcionarioRepository.existeEmail(f.getEmail_funcionario())){
             throw new IllegalArgumentException("Email do Funcionario ja existe");
         }
         if (f.getNome_funcionario()==null || f.getNome_funcionario().isEmpty()){
@@ -65,6 +65,9 @@ public class FuncionarioService{
 
     public void valiacaoRemova(int id, String email, String senha){
         try{
+            if (!funcionarioRepository.existeId(id)){
+                throw new IllegalArgumentException("Não existe o id");
+            }
             if (id<0){
                 throw new IllegalArgumentException("ID invalido");
             }

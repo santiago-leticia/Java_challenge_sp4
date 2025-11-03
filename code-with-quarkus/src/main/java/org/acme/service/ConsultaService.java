@@ -103,7 +103,9 @@ public class ConsultaService {
 
     public void valiacaoRemover(int id, String email_u, String senha_u){
         try{
-
+            if (!consultaRepository.existeId(id)){
+                throw new IllegalArgumentException("Id não existe");
+            }
             if (id<=0){
                 throw  new IllegalAccessError("Id está incorreta");
             }

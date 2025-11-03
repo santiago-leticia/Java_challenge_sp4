@@ -103,6 +103,18 @@ public class ConsultaRepository  {
         }
 
     }
+    public boolean existeId(int id){
+        String sql="SELECT COUNT(*) FROM T_RHSTU_CONSULTA WHERE id_consulta=?";
+        try(Connection con=dataSource.getConnection();
+            PreparedStatement ps=con.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            try(ResultSet rs= ps.executeQuery()){
+                return (rs.next() && rs.getInt(1)>0);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     public void RemoverConsulta(int id_consulta, String email_paciente, String s_p) throws SQLException {

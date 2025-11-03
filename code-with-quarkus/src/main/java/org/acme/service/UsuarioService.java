@@ -19,7 +19,7 @@ public class UsuarioService {
             usuarioRepository.inserirPaciente(usuario);
     }
     public void valicaoCadastro(UsuarioDTO usuario){
-        if (usuarioRepository.Existe(usuario.getEmail_usuario())){
+        if (usuarioRepository.existeEmail(usuario.getEmail_usuario())){
             throw new IllegalArgumentException("Email ja cadastrado");
         }
         if (usuarioRepository.existeCpf(usuario.getCpf())){
@@ -69,8 +69,8 @@ public class UsuarioService {
     }
     public void validacaoRemocao(int id, String email, String senha){
         try {
-            if (!usuarioExiste(email, senha)){
-                throw new IllegalArgumentException("Existe");}
+            if (!usuarioRepository.existeId(id)){
+                throw new IllegalArgumentException("Não existe");}
             if(id<0){
                 throw new IllegalAccessError("O id não pode ter valor menor do que 0");
             }
@@ -83,10 +83,6 @@ public class UsuarioService {
         } catch (Exception e){
             throw  new RuntimeException(e);
         }
-    }
-    public boolean usuarioExiste(String email, String senha){
-        List<Usuario> c= usuarioRepository.RelatorioPaciente(email,senha);
-        return  !c.isEmpty();
     }
 
     public void atualizaInformacaoU(int id, String nome,String cpf, String telefone, String email, String senha) throws SQLException{
