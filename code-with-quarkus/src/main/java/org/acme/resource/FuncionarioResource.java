@@ -10,7 +10,9 @@ import org.acme.model.Funcionario;
 import org.acme.service.FuncionarioService;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Path("/doctorAjuda")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -28,9 +30,9 @@ public class FuncionarioResource {
             return Response.status(Response.Status.CREATED)
                     .entity("Funcionario criando").build();
         }catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao adicionar paciente" +e.getMessage())
-                    .build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", e.getMessage());
+            return Response.serverError().entity(erro).build();
         } catch (IllegalArgumentException e) {
             return Response.status(422).entity(e.getMessage()).build();
         }
@@ -44,10 +46,13 @@ public class FuncionarioResource {
             return Response.status(Response.Status.OK)
                     .entity("Removido com sucesso").build();
         }catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro no server.").build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro interno do servidor");
+            return Response.serverError().entity(erro).build();
         } catch (IllegalArgumentException e) {
-            return Response.status(200).entity(e.getMessage()).build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Parâmetro inválido");
+            return Response.status(Response.Status.BAD_REQUEST).entity(erro).build();
         }
     }
 
@@ -63,8 +68,9 @@ public class FuncionarioResource {
             return Response.status(Response.Status.OK)
                     .entity(l).build();
         }catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao conectar").build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro interno do servidor");
+            return Response.serverError().entity(erro).build();
         } catch (IllegalArgumentException e){
             return Response.status(422).entity(e.getMessage()).build();
         }
@@ -86,13 +92,13 @@ public class FuncionarioResource {
                     .build();
 
         }catch (SQLException e){
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro interno do servidor");
+            return Response.serverError().entity(erro).build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(422)
                     .entity(e.getMessage())
                     .build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage()).build();        }
-
+        }
     }
 }

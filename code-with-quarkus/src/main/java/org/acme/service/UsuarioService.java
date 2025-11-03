@@ -19,6 +19,12 @@ public class UsuarioService {
             usuarioRepository.inserirPaciente(usuario);
     }
     public void valicaoI(UsuarioDTO usuario){
+        if (usuarioRepository.Existe(usuario.getEmail_usuario())){
+            throw new IllegalArgumentException("Email ja cadastrado");
+        }
+        if (usuarioRepository.existeCpf(usuario.getCpf())){
+            throw new IllegalArgumentException("CPF ja cadastrado.");
+        }
         if (usuario.getNome_usuario()==null || usuario.getNome_usuario().isEmpty()){
             throw new IllegalArgumentException("Nome incorreto");
         }

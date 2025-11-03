@@ -104,7 +104,7 @@ public class ConsultaService {
     public void valiacaoRemover(int id, String email_consulta, String senha_consulta){
         try{
 
-            if (id<0){
+            if (id<=0){
                 throw  new IllegalAccessError("Id está incorreta");
             }
             if (email_consulta==null || email_consulta.isEmpty()){

@@ -20,6 +20,9 @@ public class FuncionarioService{
         funcionarioRepository.inserirFuncionario(funcionario);
     }
     public void valiacaoC_F(FuncionarioDTO f){
+        if (funcionarioRepository.existe(f.getEmail_funcionario())){
+            throw new IllegalArgumentException("Email do Funcionario ja existe");
+        }
         if (f.getNome_funcionario()==null || f.getNome_funcionario().isEmpty()){
             throw new IllegalArgumentException("Nome incorreto");
         }

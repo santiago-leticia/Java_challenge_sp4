@@ -60,23 +60,23 @@ public class ConsultaRepository  {
                 "c.ds_informacoes, " +
                 "p.id_paciente, " +
                 "p.nm_paciente, " +
-                "p.nr_cpf, " +
+                "p.cpf, " +
                 "p.nr_telefone_paciente, " +
-                "p.ds_email_paciente, " +
-                "p.ds_senha_paciente, " +
+                "p.email_paciente, " +
+                "p.senha_paciente, " +
                 "f.id_funcionario, " +
                 "f.nm_funcionario " +
                 "FROM " +
                 "   T_RHSTU_CONSULTA c, " +
                 "   T_RHSTU_PACIENTE p, " +
                 "   T_RHSTU_FUNCIONARIO f " +
-                "WHERE c.id_paciente = p.id_paciente AND c.id_funcionario = f.id_funcionario AND c.id_consulta=? AND p.ds_email_paciente=? AND p.ds_senha_paciente=? ";
+                "WHERE c.id_paciente = p.id_paciente AND c.id_funcionario = f.id_funcionario AND p.email_paciente=? AND p.senha_paciente=? ";
         List<Consulta> l = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)
         ) {
-            ps.setString(2, email);
-            ps.setString(3, senha);
+            ps.setString(1, email);
+            ps.setString(2, senha);
 
             try (ResultSet rs = ps.executeQuery()){
 
@@ -106,7 +106,7 @@ public class ConsultaRepository  {
 
 
     public void RemoverConsulta(int id_consulta, String email_paciente, String s_p) throws SQLException {
-        String sql = "DELETE FROM T_RHSTU_CONSULTA WHERE id_consulta=? AND id_paciente IN (SELECT id_paciente FROM T_RHSTU_PACIENTE WHERE ds_email_paciente=? AND ds_senha_paciente=?)";
+        String sql = "DELETE FROM T_RHSTU_CONSULTA WHERE id_consulta=? AND id_paciente IN (SELECT id_paciente FROM T_RHSTU_PACIENTE WHERE email_paciente=? AND senha_paciente=?)";
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql))
         {

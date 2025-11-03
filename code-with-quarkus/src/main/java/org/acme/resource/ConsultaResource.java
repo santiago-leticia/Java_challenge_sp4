@@ -10,7 +10,9 @@ import org.acme.model.DTO.ConsultaDTO;
 import org.acme.service.ConsultaService;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Path("/doctorAjuda")
@@ -27,11 +29,11 @@ public class ConsultaResource {
         try{
             consultaService.cadastraConsulta(consulta);
             return Response.status(Response.Status.CREATED)
-                    .entity("Consulta cadastrada.").build();
+                    .entity(consulta).build();
         }catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao adicionar Consulta: " +e.getMessage())
-                    .build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro no servidor");
+            return Response.serverError().entity(erro).build();
         } catch (IllegalArgumentException e){
             return Response.status(422).entity(e.getMessage()).build();
         }
@@ -40,17 +42,17 @@ public class ConsultaResource {
     @Path("/relatorio/consulta")
     public Response Relatorio_Consulta(Consulta c
     ){
-
         try{
             List<Consulta> l= consultaService.existeConsulta(
                     c.getEmail_usuario(),
                     c.getSenha_usuario()
             );
             return Response.status(Response.Status.OK)
-                    .entity(l).build();
+                    .entity("Consulta enviada").build();
         }catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro no Server").build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro interno do servidor");
+            return Response.serverError().entity(erro).build();
         }
     }
 
@@ -65,10 +67,9 @@ public class ConsultaResource {
                     .entity("Removido com sucesso")
                     .build();
         }catch (SQLException e){
-            return Response
-                    .status(Response.Status.UNAUTHORIZED)
-                    .entity("Erro no server.")
-                    .build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro no servido");
+            return Response.serverError().entity(erro).build();
         } catch (IllegalArgumentException e) {
             return Response
                     .status(200)
@@ -89,16 +90,14 @@ public class ConsultaResource {
                     c.getHoras_consulta(),
                     c.getInformacao_consulta());
 
-            return Response
-                    .status(Response.Status.OK)
-                    .entity("Dados atualizando")
-                    .build();
-
+            Map<String, String> resposta = new HashMap<>();
+            resposta.put("mensagem", "Atualizando com sucesso.");
+            return Response.ok(resposta).build();
 
         } catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
-                    .build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro no servido");
+            return Response.serverError().entity(erro).build();
         } catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(e.getMessage()).build();

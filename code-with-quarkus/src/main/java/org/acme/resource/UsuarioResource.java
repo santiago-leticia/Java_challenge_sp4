@@ -10,7 +10,9 @@ import org.acme.model.Usuario;
 import org.acme.service.UsuarioService;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Path("/doctorAjuda")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -29,9 +31,9 @@ public class UsuarioResource {
                     .entity("Criando com sucesso").build();
 
         }catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao adicionar paciente: " +e.getMessage())
-                    .build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro no servido");
+            return Response.serverError().entity(erro).build();
         }catch (IllegalArgumentException e){
             return  Response.status(422).entity(e.getMessage()).build();
         }
@@ -49,7 +51,9 @@ public class UsuarioResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao conectar").build();
         } catch (IllegalArgumentException e){
-            return Response.status(422).entity(e.getMessage()).build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Usuário não encontrado");
+            return Response.status(Response.Status.NOT_FOUND).entity(erro).build();
         }
     }
 
@@ -63,10 +67,13 @@ public class UsuarioResource {
             return  Response.status(Response.Status.OK)
                     .entity("Removido com sucesso").build();
         }catch (SQLException e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro no server.").build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro",e.getMessage());
+            return Response.serverError().entity(erro).build();
         }catch (IllegalArgumentException e){
-            return  Response.status(200).entity(e.getMessage()).build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Usuário não encontrado");
+            return Response.status(Response.Status.NOT_FOUND).entity(erro).build();
         }
     }
 
@@ -87,10 +94,9 @@ public class UsuarioResource {
                     .build();
 
         }catch (SQLException e){
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
-                    .build();
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Erro no servido");
+            return Response.serverError().entity(erro).build();
         }catch (IllegalArgumentException e){
             return Response.
                     status(Response.Status.BAD_REQUEST)
