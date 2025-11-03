@@ -94,12 +94,11 @@ public class UsuarioResource {
                     .build();
 
         }catch (SQLException e){
-            Map<String, String> erro = new HashMap<>();
-            erro.put("erro", "Erro no servido");
-            return Response.serverError().entity(erro).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage()).build();
         }catch (IllegalArgumentException e){
             return Response.
-                    status(Response.Status.BAD_REQUEST)
+                    status(422)
                     .entity(e.getMessage()).build();
         }
     }

@@ -95,9 +95,8 @@ public class ConsultaResource {
             return Response.ok(resposta).build();
 
         } catch (SQLException e){
-            Map<String, String> erro = new HashMap<>();
-            erro.put("erro", "Erro no servido");
-            return Response.serverError().entity(erro).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage()).build();
         } catch (IllegalArgumentException e){
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(e.getMessage()).build();
