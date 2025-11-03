@@ -1,6 +1,6 @@
 package org.acme.model.DTO;
 
-public class FuncionarioDTO extends UsuarioDTO {
+public class FuncionarioDTO{
     private String nome_funcionario;
     private String tipo_funcionario;
     private String email_funcionario;

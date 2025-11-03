@@ -96,21 +96,21 @@ public class ConsultaService {
 
 
 
-    public void RemoverIdConsulta(int id, String email_consulta, String senha_consulta) throws SQLException{
-        valiacaoRemover(id, email_consulta, senha_consulta);
-        consultaRepository.RemoverConsulta(id, email_consulta, senha_consulta);
+    public void RemoverIdConsulta(int id, String email_usuario, String senha_usuario) throws SQLException{
+        valiacaoRemover(id, email_usuario, senha_usuario);
+        consultaRepository.RemoverConsulta(id, email_usuario, senha_usuario);
     }
 
-    public void valiacaoRemover(int id, String email_consulta, String senha_consulta){
+    public void valiacaoRemover(int id, String email_u, String senha_u){
         try{
 
             if (id<=0){
                 throw  new IllegalAccessError("Id está incorreta");
             }
-            if (email_consulta==null || email_consulta.isEmpty()){
+            if (email_u==null || email_u.isEmpty()){
                 throw new IllegalArgumentException("Email do paciente incorreto");
             }
-            if (senha_consulta==null || senha_consulta.isEmpty()){
+            if (senha_u==null || senha_u.isEmpty()){
                 throw new IllegalArgumentException("Senha incorreta");
             }
         } catch (Exception e) {
